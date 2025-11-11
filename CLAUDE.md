@@ -53,7 +53,9 @@ my-budget-buddy/
 ├── tsconfig.node.json   # Config TS pour les scripts Node
 ├── eslint.config.js     # Configuration ESLint (flat config)
 ├── .prettierrc          # Configuration Prettier
-└── package.json         # Dépendances et scripts
+├── package.json         # Dépendances et scripts
+├── CHANGELOG.md         # Historique des versions (Keep a Changelog)
+└── CLAUDE.md            # Base de connaissances du projet
 
 ```
 
@@ -132,6 +134,14 @@ Cette section consigne les décisions importantes et leur justification:
 - **Décision**: React 19.2.0
 - **Rationale**: Dernière version stable avec nouvelles fonctionnalités (React Compiler, etc.)
 
+### 2025-11-11: Gestion des versions
+- **Décision**: CHANGELOG.md avec Keep a Changelog + Semantic Versioning
+- **Rationale**:
+  - Keep a Changelog: Format standard reconnu par l'industrie, facile à lire pour humains et machines
+  - Semantic Versioning: Communication claire de l'impact des changements (breaking changes vs features vs fixes)
+  - Facilite les releases futures et la compréhension de l'évolution du projet
+  - Documenter l'historique dès le début pour éviter de perdre le contexte des décisions
+
 ## Conventions & Standards
 
 ### Code Style
@@ -157,6 +167,17 @@ Cette section consigne les décisions importantes et leur justification:
 - Messages en français
 - Format: `type: description courte`
 - Types: feat, fix, refactor, docs, style, test, chore
+
+### Gestion des versions (Changelog)
+- **Fichier**: CHANGELOG.md à la racine du projet
+- **Format**: [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
+- **Versioning**: [Semantic Versioning](https://semver.org/lang/fr/) (MAJOR.MINOR.PATCH)
+- **Mise à jour**: CHANGELOG.md doit être mis à jour pour chaque commit significatif
+- **Catégories**: Ajouté, Modifié, Déprécié, Supprimé, Corrigé, Sécurité
+- **Convention**:
+  - Version 0.x.x pendant le développement initial
+  - Version 1.0.0 pour la première release stable
+  - Garder une section [Non publié] pour les changements en cours
 
 ### Imports
 - Ordre recommandé:
