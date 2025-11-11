@@ -1,73 +1,47 @@
-# React + TypeScript + Vite
+# my-budget-buddy
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Application de gestion de budget personnel moderne et intuitive.
 
-Currently, two official plugins are available:
+## Stack Technique
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend**: React 19.2.0 avec TypeScript 5.9.3
+- **Build Tool**: Vite 7.2.2
+- **Qualité du code**: ESLint 9.39.1 + Prettier 3.6.2
+- **Gestionnaire de paquets**: npm
 
-## React Compiler
+## Fonctionnalités Prévues
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+L'application est actuellement en développement initial. Les fonctionnalités suivantes sont planifiées:
 
-## Expanding the ESLint configuration
+- **Gestion des transactions**: Suivi des dépenses et revenus
+- **Catégorisation**: Organisation des transactions par catégories personnalisables
+- **Comptes multiples**: Gestion de plusieurs sources de revenus et comptes bancaires
+- **Périodes budgétaires**: Suivi mensuel/annuel des budgets
+- **Objectifs financiers**: Définition et suivi d'objectifs d'épargne
+- **Visualisations**: Graphiques et statistiques pour analyser les habitudes financières
+- **Export de données**: Possibilité d'exporter les données en différents formats
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Développement
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Installation des dépendances
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Démarrer le serveur de développement
+npm run dev
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+# Build de production
+npm run build
+
+# Linting et formatage
+npm run lint        # Vérifier le code
+npm run format      # Formater le code
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## État du Projet
 
-```js
-// eslint.config.js
-import reactDom from 'eslint-plugin-react-dom';
-import reactX from 'eslint-plugin-react-x';
+Version actuelle: **0.2.0** (en développement)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+Le projet dispose d'une base solide avec React, TypeScript et les outils de développement configurés. La prochaine étape consiste à définir l'architecture de données et à implémenter les fonctionnalités principales.
+
+Consultez le [CHANGELOG.md](./CHANGELOG.md) pour l'historique détaillé des versions.
