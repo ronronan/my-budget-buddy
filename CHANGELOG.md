@@ -11,6 +11,26 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.2.0] - 2025-11-11
+
+### Ajouté
+
+- Plugins Prettier pour Tailwind CSS et tri automatique des imports
+- Cache ESLint pour améliorer les performances de linting
+- Configuration personnalisée du serveur de développement Vite (port 9999, host activé)
+
+### Modifié
+
+- Configuration Prettier étendue :
+  - Largeur de ligne portée à 140 caractères
+  - Ordre des imports configuré (@ > ~ > ../ > ./)
+  - jsxSingleQuote activé
+  - package-lock.json exclu du formatage
+- Scripts npm renommés : `format` → `prettier`, `format:check` → `prettier:check`
+- Scripts ESLint mis à jour pour utiliser le cache (--cache)
+- Mise à jour de typescript-eslint (8.46.3 → 8.46.4)
+- Formatage complet de la codebase avec la nouvelle configuration Prettier
+
 ## [0.1.0] - 2025-11-11
 
 ### Ajouté
