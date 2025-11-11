@@ -1,8 +1,14 @@
+import { SiteHeader } from '@/components/site-header';
+
 export default function Page() {
   return (
-    <div>
-      <h1>About This Blog</h1>
-      <p>This blog is built with React 19 and React Router v6.21.</p>
-    </div>
+    <>
+      <SiteHeader />
+      <div className='flex flex-1 flex-col'>
+        <div className='@container/main flex flex-1 flex-col gap-2'>
+          <div className='flex flex-col gap-4 py-4 md:gap-6 md:py-6'>Page two</div>
+        </div>
+      </div>
+    </>
   );
 }
