@@ -7,10 +7,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Claude Code Permissions
 
 **Commandes autorisées sans confirmation**:
+
 - `npm` (install, run, test, build, start, etc.) - Gestion des dépendances et exécution des scripts
 - `git` (status, add, commit, push, pull, branch, checkout, etc.) - Toutes opérations Git standard
 
 **Politique d'exécution**:
+
 - Claude peut exécuter ces commandes de manière autonome pour accomplir les tâches
 - Les opérations destructives (git push --force, rm -rf, etc.) nécessitent toujours une confirmation
 - Les modifications de configuration système restent soumises à approbation
@@ -24,6 +26,7 @@ my-budget-buddy est une application de gestion de budget personnel.
 ## Technology Stack
 
 **Status**: Défini
+
 - **Frontend**: React 19.2.0 avec TypeScript
 - **Build Tool**: Vite 7.2.2
 - **Package Manager**: npm
@@ -37,6 +40,7 @@ my-budget-buddy est une application de gestion de budget personnel.
 **Status**: Structure Vite standard
 
 ### Structure des dossiers
+
 ```
 my-budget-buddy/
 ├── src/
@@ -60,6 +64,7 @@ my-budget-buddy/
 ```
 
 ### Patterns à établir
+
 - Gestion de l'état (Context API, Zustand, ou autre)
 - Routing (React Router si nécessaire)
 - Structure des composants (Atomic Design ou autre)
@@ -101,6 +106,7 @@ npm run format:check  # Vérifier le formatage sans modifier
 **Status**: Non définis
 
 Modèles de données à créer:
+
 - Transactions/Dépenses
 - Catégories de budget
 - Comptes/Sources de revenus
@@ -112,6 +118,7 @@ Modèles de données à créer:
 Cette section consigne les décisions importantes et leur justification:
 
 ### 2025-11-11: Initialisation du projet
+
 - **Décision**: Utilisation de npm comme gestionnaire de paquets
 - **Rationale**: Standard de l'écosystème Node.js, large adoption
 
@@ -119,6 +126,7 @@ Cette section consigne les décisions importantes et leur justification:
 - **Rationale**: Centraliser toutes les décisions et conventions pour référence future par Claude Code
 
 ### 2025-11-11: Stack technique frontend
+
 - **Décision**: React + TypeScript avec Vite
 - **Rationale**:
   - React: Framework populaire, large écosystème, excellent pour les SPA
@@ -135,6 +143,7 @@ Cette section consigne les décisions importantes et leur justification:
 - **Rationale**: Dernière version stable avec nouvelles fonctionnalités (React Compiler, etc.)
 
 ### 2025-11-11: Gestion des versions
+
 - **Décision**: CHANGELOG.md avec Keep a Changelog + Semantic Versioning
 - **Rationale**:
   - Keep a Changelog: Format standard reconnu par l'industrie, facile à lire pour humains et machines
@@ -145,6 +154,7 @@ Cette section consigne les décisions importantes et leur justification:
 ## Conventions & Standards
 
 ### Code Style
+
 - **Formatage**: Géré automatiquement par Prettier
   - Single quotes
   - 2 espaces d'indentation
@@ -152,23 +162,27 @@ Cette section consigne les décisions importantes et leur justification:
   - 80 caractères max par ligne
 
 ### Linting
+
 - **ESLint**: Configuration stricte avec TypeScript
   - Règles React Hooks recommandées
   - Règles React Refresh (Vite)
   - TypeScript strict mode
 
 ### Conventions de nommage
+
 - **Composants**: PascalCase (ex: `BudgetCard.tsx`)
 - **Fichiers utilitaires**: camelCase (ex: `formatCurrency.ts`)
 - **Constantes**: UPPER_SNAKE_CASE
 - **Types/Interfaces**: PascalCase avec prefix I pour interfaces si nécessaire
 
 ### Structure des commits
+
 - Messages en français
 - Format: `type: description courte`
 - Types: feat, fix, refactor, docs, style, test, chore
 
 ### Gestion des versions (Changelog)
+
 - **Fichier**: CHANGELOG.md à la racine du projet
 - **Format**: [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/)
 - **Versioning**: [Semantic Versioning](https://semver.org/lang/fr/) (MAJOR.MINOR.PATCH)
@@ -180,6 +194,7 @@ Cette section consigne les décisions importantes et leur justification:
   - Garder une section [Non publié] pour les changements en cours
 
 ### Imports
+
 - Ordre recommandé:
   1. Librairies externes (React, etc.)
   2. Composants internes
@@ -196,8 +211,8 @@ Cette section consigne les décisions importantes et leur justification:
 
 ## Known Issues & TODOs
 
-*[Aucun problème connu pour le moment]*
+_[Aucun problème connu pour le moment]_
 
 ## Notes & Context
 
-*[Section pour notes contextuelles importantes]*
+_[Section pour notes contextuelles importantes]_

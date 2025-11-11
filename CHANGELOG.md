@@ -8,11 +8,13 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 ## [Non publié]
 
 ### En cours
+
 - Documentation des changements pour les prochaines versions
 
 ## [0.1.0] - 2025-11-11
 
 ### Ajouté
+
 - Initialisation du projet React 19.2.0 avec TypeScript 5.9.3
 - Configuration de Vite 7.2.2 comme outil de build
 - Configuration d'ESLint 9.39.1 avec flat config et plugins React
@@ -23,6 +25,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 - Configuration des permissions Claude Code pour npm et git
 
 ### Conventions établies
+
 - Structure de projet Vite standard
 - Code style avec Prettier (single quotes, 2 espaces, semi-colons)
 - Messages de commit en français avec préfixe type (feat, fix, etc.)
@@ -31,6 +34,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 ## [0.0.0] - 2025-11-11
 
 ### Ajouté
+
 - Initialisation du repository Git
 - Création du README.md initial
 
