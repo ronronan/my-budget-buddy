@@ -18,3 +18,5 @@ build
 
 # Git
 .git
+
+package-lock.json
