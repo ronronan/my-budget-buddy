@@ -22,7 +22,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - **Composants UI shadcn/ui**:
   - Composants Button et Card dans components/ui/
-  - Nombreux composants Radix UI ajoutés aux dépendances (@radix-ui/react-*)
+  - Nombreux composants Radix UI ajoutés aux dépendances (@radix-ui/react-\*)
   - Utilitaire cn() dans lib/utils.ts pour fusion de classes CSS
 
 - **Bibliothèques et outils**:
