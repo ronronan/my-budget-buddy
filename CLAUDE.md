@@ -19,15 +19,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 my-budget-buddy est une application de gestion de budget personnel.
 
-**État actuel**: Projet en phase d'initialisation (seulement README et LICENSE présents).
+**État actuel**: Projet initialisé avec npm. Base de connaissances (CLAUDE.md) et package.json créés.
 
 ## Technology Stack
 
-**Status**: Non défini
+**Status**: En cours de définition
 - Frontend: À déterminer
-- Backend: À déterminer
+- Backend: Node.js (npm initialisé)
 - Base de données: À déterminer
-- Langage(s): À déterminer
+- Langage(s): JavaScript/TypeScript (à confirmer)
 
 ## Architecture
 
@@ -42,18 +42,17 @@ Cette section sera mise à jour avec:
 
 ## Commands & Workflows
 
-**Status**: Aucune commande définie
+**Status**: Configuration de base
 
-Cette section contiendra:
 ```bash
-# Installation
-# [À définir]
+# Installation des dépendances
+npm install
 
 # Développement
-# [À définir]
+# [À définir selon le framework choisi]
 
 # Tests
-# [À définir]
+npm test  # (actuellement non configuré)
 
 # Build
 # [À définir]
@@ -74,7 +73,11 @@ Modèles de données à créer:
 
 Cette section consigne les décisions importantes et leur justification:
 
-*[Aucune décision enregistrée pour le moment]*
+### 2025-11-11: Initialisation du projet
+- **Décision**: Utilisation de npm comme gestionnaire de paquets
+- **Rationale**: Standard de l'écosystème Node.js, large adoption
+- **Décision**: Création de CLAUDE.md comme base de connaissances vivante
+- **Rationale**: Centraliser toutes les décisions et conventions pour référence future par Claude Code
 
 ## Conventions & Standards
 
