@@ -33,6 +33,16 @@ my-budget-buddy est une application de gestion de budget personnel.
 - **Language**: TypeScript 5.9.3
 - **Linting**: ESLint 9.39.1 avec plugins React
 - **Formatting**: Prettier 3.6.2
+- **UI Components**: shadcn/ui (@radix-ui)
+- **Styling**: Tailwind CSS v4 avec plugin Vite
+- **Routing**: React Router DOM v7.9.5
+- **State Management**: À déterminer
+- **Data Visualization**: Recharts v2.15.4
+- **Form Validation**: Zod v4.1.12
+- **Drag & Drop**: @dnd-kit
+- **Tables**: TanStack Table v8
+- **Notifications**: Sonner v2
+- **Themes**: next-themes v0.4.6
 - Base de données: À déterminer (prochaine étape)
 
 ## Architecture
@@ -44,31 +54,50 @@ my-budget-buddy est une application de gestion de budget personnel.
 ```
 my-budget-buddy/
 ├── src/
-│   ├── App.tsx          # Composant principal
-│   ├── App.css          # Styles du composant principal
-│   ├── main.tsx         # Point d'entrée de l'application
-│   ├── index.css        # Styles globaux
-│   └── assets/          # Ressources statiques
-├── public/              # Fichiers publics statiques
-├── index.html           # Template HTML
-├── vite.config.ts       # Configuration Vite
-├── tsconfig.json        # Configuration TypeScript principale
-├── tsconfig.app.json    # Config TS pour l'application
-├── tsconfig.node.json   # Config TS pour les scripts Node
-├── eslint.config.js     # Configuration ESLint (flat config)
-├── .prettierrc          # Configuration Prettier
-├── package.json         # Dépendances et scripts
-├── CHANGELOG.md         # Historique des versions (Keep a Changelog)
-└── CLAUDE.md            # Base de connaissances du projet
+│   ├── assets/
+│   │   └── styles/
+│   │       └── globals.css   # Styles globaux Tailwind CSS
+│   ├── components/
+│   │   └── ui/               # Composants shadcn/ui
+│   │       ├── button.tsx
+│   │       └── card.tsx
+│   ├── hooks/                # Custom hooks React
+│   │   └── use-mobile.ts     # Hook détection mobile
+│   ├── lib/
+│   │   └── utils.ts          # Utilitaires (cn() pour class merging)
+│   ├── pages/                # Pages de l'application
+│   │   ├── Home.tsx
+│   │   └── PageTwo.tsx
+│   ├── App.tsx               # Composant principal avec routing
+│   └── main.tsx              # Point d'entrée avec BrowserRouter
+├── public/                   # Fichiers publics statiques
+├── index.html                # Template HTML
+├── vite.config.ts            # Configuration Vite (alias, plugins)
+├── tsconfig.json             # Configuration TypeScript principale
+├── tsconfig.app.json         # Config TS pour l'application
+├── tsconfig.node.json        # Config TS pour les scripts Node
+├── eslint.config.js          # Configuration ESLint (flat config)
+├── .prettierrc               # Configuration Prettier
+├── package.json              # Dépendances et scripts
+├── CHANGELOG.md              # Historique des versions
+└── CLAUDE.md                 # Base de connaissances du projet
 
 ```
 
+### Patterns établis
+
+- **Routing**: React Router v7 avec structure pages/
+- **Composants UI**: shadcn/ui dans components/ui/
+- **Custom hooks**: Fichiers dans hooks/
+- **Utilitaires**: Fonctions partagées dans lib/
+- **Alias imports**: '@/' pour imports absolus depuis src/
+
 ### Patterns à établir
 
-- Gestion de l'état (Context API, Zustand, ou autre)
-- Routing (React Router si nécessaire)
-- Structure des composants (Atomic Design ou autre)
+- Gestion de l'état globale (Context API, Zustand, ou autre)
 - Organisation des services/API calls
+- Structure des modèles de données
+- Gestion des formulaires avec validation Zod
 
 ## Commands & Workflows
 
@@ -80,7 +109,7 @@ npm install
 
 # Développement (démarrer le serveur de dev Vite)
 npm run dev
-# Serveur accessible sur http://localhost:5173
+# Serveur accessible sur http://localhost:9999
 
 # Build de production
 npm run build
@@ -150,6 +179,70 @@ Cette section consigne les décisions importantes et leur justification:
   - Semantic Versioning: Communication claire de l'impact des changements (breaking changes vs features vs fixes)
   - Facilite les releases futures et la compréhension de l'évolution du projet
   - Documenter l'historique dès le début pour éviter de perdre le contexte des décisions
+
+### 2025-11-11: Intégration UI et Routing
+
+- **Décision**: shadcn/ui comme bibliothèque de composants
+- **Rationale**:
+  - Composants accessibles basés sur Radix UI
+  - Personnalisables avec Tailwind CSS
+  - Pas de dépendance NPM lourde, copie des composants dans le projet
+  - Excellente DX et documentation
+
+- **Décision**: React Router v7 pour le routing
+- **Rationale**:
+  - Standard de facto pour le routing React
+  - API simple et puissante
+  - Support du code splitting et lazy loading
+  - Bonne intégration avec React 19
+
+- **Décision**: Tailwind CSS v4 avec plugin Vite
+- **Rationale**:
+  - Version la plus récente avec meilleures performances
+  - Plugin Vite natif pour intégration optimale
+  - Utility-first CSS pour développement rapide
+  - Excellent écosystème de plugins
+
+- **Décision**: Alias '@' pour imports absolus
+- **Rationale**:
+  - Évite les imports relatifs complexes (../../..)
+  - Meilleure lisibilité du code
+  - Facilite les refactorings
+  - Convention standard dans l'écosystème React
+
+- **Décision**: Structure pages/ pour le routing
+- **Rationale**:
+  - Séparation claire entre pages et composants réutilisables
+  - Facilite la navigation dans le code
+  - Scalable pour applications de taille moyenne/grande
+
+- **Décision**: Zod pour validation de formulaires
+- **Rationale**:
+  - TypeScript-first avec inférence de types
+  - API intuitive et composable
+  - Excellent pour validation côté client et serveur
+  - Bonne intégration avec React Hook Form (future intégration possible)
+
+- **Décision**: Recharts pour visualisation de données
+- **Rationale**:
+  - Bibliothèque mature et stable
+  - Composants React natifs (pas de wrapper)
+  - Adapté pour données budgétaires (graphiques en barres, lignes, camemberts)
+  - Responsive et personnalisable
+
+- **Décision**: TanStack Table pour tableaux de données
+- **Rationale**:
+  - Headless UI pour contrôle total du rendu
+  - Performances excellentes avec virtualisation
+  - Fonctionnalités avancées (tri, filtrage, pagination)
+  - Parfait pour tableaux de transactions
+
+- **Décision**: @dnd-kit pour drag & drop
+- **Rationale**:
+  - Moderne, performant et accessible
+  - Excellent support TypeScript
+  - Flexible et composable
+  - Utile pour réorganiser catégories/budgets
 
 ## Conventions & Standards
 
