@@ -21,7 +21,7 @@ export function LoginForm() {
     try {
       await login(email, password);
       navigate('/');
-    } catch (error) {
+    } catch {
       // Error déjà géré par AuthContext (toast)
     } finally {
       setIsLoading(false);

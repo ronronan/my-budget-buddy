@@ -22,7 +22,7 @@ export function RegisterForm() {
     try {
       await register(email, password, displayName);
       navigate('/');
-    } catch (error) {
+    } catch {
       // Error déjà géré par AuthContext (toast)
     } finally {
       setIsLoading(false);
