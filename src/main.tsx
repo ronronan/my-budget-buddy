@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { BudgetProvider } from '@/contexts/BudgetContext';
 
 import App from './App.tsx';
 
@@ -11,8 +12,10 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
-        <Toaster position='top-right' />
+        <BudgetProvider>
+          <App />
+          <Toaster position='top-right' />
+        </BudgetProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,

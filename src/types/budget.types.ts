@@ -18,7 +18,22 @@ export interface Category {
   color: string;
   icon?: string;
   budget?: number;
+  parentId: string | null;
+  order: number;
   createdAt: Date;
+  updatedAt?: Date;
+}
+
+export interface CategoryWithSubcategories extends Category {
+  subcategories: Category[];
+}
+
+export interface CategoryInput {
+  name: string;
+  color: string;
+  icon?: string;
+  budget?: number;
+  parentId?: string | null;
 }
 
 export interface BudgetSummary {
