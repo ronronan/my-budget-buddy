@@ -36,14 +36,14 @@ my-budget-buddy est une application de gestion de budget personnel.
 - **UI Components**: shadcn/ui (@radix-ui)
 - **Styling**: Tailwind CSS v4 avec plugin Vite
 - **Routing**: React Router DOM v7.9.5
-- **State Management**: À déterminer
+- **State Management**: Context API (AuthContext, BudgetContext)
 - **Data Visualization**: Recharts v2.15.4
 - **Form Validation**: Zod v4.1.12
 - **Drag & Drop**: @dnd-kit
 - **Tables**: TanStack Table v8
 - **Notifications**: Sonner v2
 - **Themes**: next-themes v0.4.6
-- Base de données: À déterminer (prochaine étape)
+- **Backend**: Firebase v11.2.0 (Authentication + Firestore Database)
 
 ## Architecture
 
@@ -58,19 +58,41 @@ my-budget-buddy/
 │   │   └── styles/
 │   │       └── globals.css   # Styles globaux Tailwind CSS
 │   ├── components/
+│   │   ├── auth/             # Composants d'authentification
+│   │   │   ├── LoginForm.tsx
+│   │   │   ├── RegisterForm.tsx
+│   │   │   └── ProtectedRoute.tsx
 │   │   └── ui/               # Composants shadcn/ui
 │   │       ├── button.tsx
 │   │       └── card.tsx
+│   ├── config/               # Configuration Firebase
+│   │   └── firebase.ts
+│   ├── contexts/             # Context providers React
+│   │   └── AuthContext.tsx
 │   ├── hooks/                # Custom hooks React
-│   │   └── use-mobile.ts     # Hook détection mobile
+│   │   ├── use-mobile.ts     # Hook détection mobile
+│   │   └── useAuth.ts        # Hook authentification
 │   ├── lib/
-│   │   └── utils.ts          # Utilitaires (cn() pour class merging)
+│   │   ├── utils.ts          # Utilitaires (cn() pour class merging)
+│   │   └── firebaseErrors.ts # Gestion erreurs Firebase
 │   ├── pages/                # Pages de l'application
 │   │   ├── Home.tsx
-│   │   └── PageTwo.tsx
-│   ├── App.tsx               # Composant principal avec routing
-│   └── main.tsx              # Point d'entrée avec BrowserRouter
+│   │   ├── PageTwo.tsx
+│   │   ├── Settings.tsx
+│   │   ├── Login.tsx
+│   │   └── Register.tsx
+│   ├── services/             # Services Firebase
+│   │   ├── auth.service.ts
+│   │   └── firestore.service.ts
+│   ├── types/                # Types TypeScript
+│   │   ├── auth.types.ts
+│   │   ├── budget.types.ts
+│   │   └── index.ts
+│   ├── App.tsx               # Composant principal avec routing protégé
+│   └── main.tsx              # Point d'entrée avec AuthProvider
 ├── public/                   # Fichiers publics statiques
+├── .env.example              # Template variables d'environnement
+├── .env.local                # Variables Firebase (NON commité)
 ├── index.html                # Template HTML
 ├── vite.config.ts            # Configuration Vite (alias, plugins)
 ├── tsconfig.json             # Configuration TypeScript principale
@@ -78,6 +100,7 @@ my-budget-buddy/
 ├── tsconfig.node.json        # Config TS pour les scripts Node
 ├── eslint.config.js          # Configuration ESLint (flat config)
 ├── .prettierrc               # Configuration Prettier
+├── .gitignore                # Fichiers exclus du versioning
 ├── package.json              # Dépendances et scripts
 ├── CHANGELOG.md              # Historique des versions
 └── CLAUDE.md                 # Base de connaissances du projet
@@ -88,16 +111,20 @@ my-budget-buddy/
 
 - **Routing**: React Router v7 avec structure pages/
 - **Composants UI**: shadcn/ui dans components/ui/
-- **Custom hooks**: Fichiers dans hooks/
+- **Custom hooks**: Fichiers dans hooks/ (useAuth, use-mobile)
 - **Utilitaires**: Fonctions partagées dans lib/
 - **Alias imports**: '@/' pour imports absolus depuis src/
+- **State Management**: Context API (AuthContext pour authentification)
+- **Services Layer**: Services Firebase dans services/ (auth.service, firestore.service)
+- **Types**: Types TypeScript centralisés dans types/
+- **Authentication**: Routes protégées avec ProtectedRoute HOC
+- **Error Handling**: Messages d'erreur Firebase traduits en français
 
 ### Patterns à établir
 
-- Gestion de l'état globale (Context API, Zustand, ou autre)
-- Organisation des services/API calls
-- Structure des modèles de données
-- Gestion des formulaires avec validation Zod
+- Gestion des formulaires avec validation Zod (à implémenter avec React Hook Form)
+- Optimistic updates pour Firestore
+- Gestion du cache des données Firebase
 
 ## Commands & Workflows
 
@@ -132,15 +159,25 @@ npm run format:check  # Vérifier le formatage sans modifier
 
 ## Data Models
 
-**Status**: Non définis
+**Status**: Définis dans types/
 
-Modèles de données à créer:
+### Types Authentication (types/auth.types.ts)
 
-- Transactions/Dépenses
-- Catégories de budget
-- Comptes/Sources de revenus
-- Périodes budgétaires
-- Objectifs financiers (si applicable)
+- **User**: uid, email, displayName, photoURL
+- **AuthContextType**: Interface pour le contexte d'authentification
+
+### Types Budget (types/budget.types.ts)
+
+- **Transaction**: id, userId, amount, category, description, date, type, createdAt, updatedAt
+- **Category**: id, userId, name, color, icon, budget, createdAt
+- **BudgetSummary**: totalIncome, totalExpenses, balance, categoriesBreakdown
+
+### Collections Firestore
+
+- `transactions` - Transactions utilisateur
+- `categories` - Catégories de budget personnalisées
+- (À venir) `budgets` - Budgets périodiques
+- (À venir) `goals` - Objectifs financiers
 
 ## Design Decisions & Rationale
 
@@ -243,6 +280,45 @@ Cette section consigne les décisions importantes et leur justification:
   - Excellent support TypeScript
   - Flexible et composable
   - Utile pour réorganiser catégories/budgets
+
+### 2025-12-27: Intégration Firebase
+
+- **Décision**: Firebase Authentication + Firestore Database
+- **Rationale**:
+  - Backend-as-a-Service pour accélérer le développement
+  - Authentication robuste et sécurisée (email/password, OAuth future)
+  - Firestore NoSQL flexible pour données budget
+  - Synchronisation temps réel (fonctionnalité future)
+  - SDK moderne avec excellent support TypeScript
+  - Gratuit jusqu'à usage significatif (Spark plan)
+
+- **Décision**: Context API pour gestion d'état global
+- **Rationale**:
+  - Suffisant pour état d'authentification et données budget
+  - Pattern React natif, pas de dépendance externe
+  - Performance acceptable pour cette échelle
+  - Évolutif vers Zustand si nécessaire
+
+- **Décision**: Services layer pour Firebase
+- **Rationale**:
+  - Séparation des préoccupations (UI vs logique métier)
+  - Testabilité améliorée (mock facile des services)
+  - Réutilisabilité des opérations CRUD
+  - Abstraction permettant changement de backend si nécessaire
+  - Code plus maintenable et organisé
+
+- **Décision**: ProtectedRoute HOC pour sécurisation
+- **Rationale**:
+  - Protection centralisée des routes authentifiées
+  - Redirection automatique vers /login si non connecté
+  - UX améliorée avec skeleton loader pendant vérification
+  - Pattern réutilisable et testable
+
+- **Décision**: Messages d'erreur Firebase en français
+- **Rationale**:
+  - Meilleure UX pour utilisateurs francophones
+  - Cohérence avec l'interface de l'application
+  - Centralisation dans firebaseErrors.ts pour maintenance facile
 
 ## Conventions & Standards
 
