@@ -10,7 +10,8 @@
     "lint:fix": "eslint --cache --fix .",
     "prettier": "prettier --check --cache .",
     "prettier:fix": "prettier --write --cache .",
-    "firebase": "firebase"
+    "firebase": "firebase",
+    "firebase:deploy": "firebase deploy"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

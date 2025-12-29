@@ -93,6 +93,10 @@ my-budget-buddy/
 ├── public/                   # Fichiers publics statiques
 ├── .env.example              # Template variables d'environnement
 ├── .env.local                # Variables Firebase (NON commité)
+├── .firebaserc               # Configuration projet Firebase
+├── firebase.json             # Configuration Firebase Hosting
+├── firestore.rules           # Règles de sécurité Firestore
+├── firestore.indexes.json    # Index Firestore personnalisés
 ├── index.html                # Template HTML
 ├── vite.config.ts            # Configuration Vite (alias, plugins)
 ├── tsconfig.json             # Configuration TypeScript principale
@@ -150,12 +154,52 @@ npm run lint          # Vérifier les erreurs ESLint
 npm run lint:fix      # Corriger automatiquement les erreurs ESLint
 
 # Formatting
-npm run format        # Formatter le code avec Prettier
-npm run format:check  # Vérifier le formatage sans modifier
+npm run prettier        # Vérifier le formatage sans modifier
+npm run prettier:fix    # Formatter le code avec Prettier
+
+# Déploiement Firebase
+npm run firebase:deploy # Déployer sur Firebase Hosting + Firestore rules
+npm run firebase        # Accès direct à Firebase CLI
 
 # Tests
 # [À configurer - Vitest recommandé pour Vite]
 ```
+
+### Workflow de déploiement
+
+**Process recommandé pour déployer en production** :
+
+1. **Vérification du code**
+   ```bash
+   npm run lint          # Vérifier les erreurs ESLint
+   npm run prettier      # Vérifier le formatage
+   ```
+
+2. **Build de production**
+   ```bash
+   npm run build         # Compile et optimise pour production
+   ```
+
+3. **Commit des changements**
+   ```bash
+   git add .
+   git commit -m "type: description"
+   git push origin main
+   ```
+
+4. **Déploiement Firebase**
+   ```bash
+   npm run firebase:deploy
+   # Déploie :
+   # - Application web (dist/) sur Firebase Hosting
+   # - Règles Firestore (firestore.rules)
+   # - Index Firestore (firestore.indexes.json)
+   ```
+
+**Important** :
+- Toujours build avant de déployer
+- Le déploiement inclut automatiquement les règles Firestore et les index
+- URL de production : [sera fournie par Firebase après premier déploiement]
 
 ## Data Models
 
@@ -319,6 +363,31 @@ Cette section consigne les décisions importantes et leur justification:
   - Meilleure UX pour utilisateurs francophones
   - Cohérence avec l'interface de l'application
   - Centralisation dans firebaseErrors.ts pour maintenance facile
+
+### 2025-12-29: Configuration Firebase Hosting
+
+- **Décision**: Firebase Hosting pour déploiement en production
+- **Rationale**:
+  - Intégration native avec Firebase Authentication et Firestore
+  - CDN mondial avec performances excellentes
+  - HTTPS automatique avec certificat SSL gratuit
+  - Déploiement simplifié avec Firebase CLI
+  - Rollback facile vers versions précédentes
+  - Gratuité pour trafic modéré (Spark plan)
+  - Configuration SPA avec rewrites pour React Router
+
+- **Décision**: Déploiement automatique des règles Firestore
+- **Rationale**:
+  - Synchronisation règles de sécurité avec le code
+  - Évite les oublis de mise à jour des règles
+  - Versioning des règles via Git
+  - Workflow cohérent (code + config en une commande)
+
+- **Configuration**:
+  - Projet Firebase : `budgeto-3rm`
+  - Dossier déployé : `dist/` (build Vite)
+  - Règles Firestore : Authentification requise pour accès categories
+  - Rewrites : Toutes les routes vers /index.html (SPA)
 
 ## Conventions & Standards
 
