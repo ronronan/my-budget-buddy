@@ -29,15 +29,15 @@ interface ColorPickerProps {
 
 export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
   return (
-    <div className='space-y-2'>
-      {label && <Label>{label}</Label>}
-      <div className='grid grid-cols-9 gap-2'>
+    <div className='space-y-2.5'>
+      {label && <Label className='text-sm font-medium'>{label}</Label>}
+      <div className='grid grid-cols-9 gap-3'>
         {BUDGET_COLORS.map((color) => (
           <button
             key={color}
             type='button'
             className={cn(
-              'size-8 rounded-md border-2 transition-all hover:scale-110',
+              'size-10 rounded-lg border-2 transition-all hover:scale-110',
               value === color ? 'border-foreground ring-2 ring-foreground ring-offset-2' : 'border-transparent',
             )}
             style={{ backgroundColor: color }}
@@ -46,9 +46,9 @@ export function ColorPicker({ value, onChange, label }: ColorPickerProps) {
           />
         ))}
       </div>
-      <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-        <div className='size-4 rounded border' style={{ backgroundColor: value }} />
-        <span>{value}</span>
+      <div className='flex items-center gap-2.5 rounded-md border bg-muted/50 px-3 py-2 text-sm'>
+        <div className='size-5 rounded-md border-2 border-background shadow-sm' style={{ backgroundColor: value }} />
+        <span className='font-medium'>{value}</span>
       </div>
     </div>
   );

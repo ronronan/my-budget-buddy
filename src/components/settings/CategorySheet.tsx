@@ -24,7 +24,6 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
     name: '',
     color: '#3b82f6',
     icon: 'IconShoppingCart',
-    budget: undefined,
     parentId: undefined,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof CategoryFormData, string>>>({});
@@ -42,16 +41,15 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
           name: category.name,
           color: category.color,
           icon: category.icon || 'IconShoppingCart',
-          budget: category.budget || undefined,
           parentId: category.parentId || undefined,
         });
       } else {
         // Mode création
+        // Si c'est une sous-catégorie, pré-sélectionner l'icône et la couleur du parent
         setFormData({
           name: '',
-          color: '#3b82f6',
-          icon: 'IconShoppingCart',
-          budget: undefined,
+          color: parentCategory?.color || '#3b82f6',
+          icon: parentCategory?.icon || 'IconShoppingCart',
           parentId: parentCategory?.id || undefined,
         });
       }
@@ -81,7 +79,6 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
       const submitData: CategoryInput = {
         ...result.data,
         icon: result.data.icon || undefined,
-        budget: result.data.budget || undefined,
         parentId: result.data.parentId || undefined,
       };
       await onSubmit(submitData);
@@ -98,8 +95,8 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent className='w-full sm:max-w-md overflow-y-auto'>
-        <SheetHeader>
+      <SheetContent className='w-full sm:max-w-lg overflow-y-auto'>
+        <SheetHeader className='pb-4'>
           <SheetTitle>{isEditing ? 'Modifier la catégorie' : isSubcategory ? 'Nouvelle sous-catégorie' : 'Nouvelle catégorie'}</SheetTitle>
           <SheetDescription>
             {isEditing
@@ -110,10 +107,10 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
           </SheetDescription>
         </SheetHeader>
 
-        <form onSubmit={handleSubmit} className='space-y-4 py-4'>
+        <form onSubmit={handleSubmit} className='space-y-6 py-6'>
           {/* Nom */}
-          <div className='space-y-2'>
-            <Label htmlFor='name'>
+          <div className='space-y-2.5'>
+            <Label htmlFor='name' className='text-sm font-medium'>
               Nom <span className='text-destructive'>*</span>
             </Label>
             <Input
@@ -122,6 +119,7 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder='Ex: Alimentation'
               disabled={isSubmitting}
+              className='h-11'
             />
             {errors.name && <p className='text-sm text-destructive'>{errors.name}</p>}
           </div>
@@ -145,28 +143,14 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
           />
           {errors.color && <p className='text-sm text-destructive'>{errors.color}</p>}
 
-          {/* Budget mensuel */}
-          <div className='space-y-2'>
-            <Label htmlFor='budget'>Budget mensuel (optionnel)</Label>
-            <Input
-              id='budget'
-              type='number'
-              step='0.01'
-              min='0'
-              value={formData.budget || ''}
-              onChange={(e) => setFormData({ ...formData, budget: e.target.value ? parseFloat(e.target.value) : undefined })}
-              placeholder='Ex: 500'
-              disabled={isSubmitting}
-            />
-            {errors.budget && <p className='text-sm text-destructive'>{errors.budget}</p>}
-          </div>
-
           {/* Catégorie parente (seulement en création et si pas déjà une sous-catégorie) */}
           {!isEditing && !isSubcategory && parentCategories.length > 0 && (
-            <div className='space-y-2'>
-              <Label htmlFor='parentId'>Catégorie parente (optionnel)</Label>
+            <div className='space-y-2.5'>
+              <Label htmlFor='parentId' className='text-sm font-medium'>
+                Catégorie parente (optionnel)
+              </Label>
               <Select value={formData.parentId || 'none'} onValueChange={(value) => setFormData({ ...formData, parentId: value === 'none' ? undefined : value })}>
-                <SelectTrigger id='parentId' disabled={isSubmitting}>
+                <SelectTrigger id='parentId' disabled={isSubmitting} className='h-11'>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -181,11 +165,11 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
             </div>
           )}
 
-          <SheetFooter className='gap-2 sm:gap-0'>
-            <Button type='button' variant='outline' onClick={onClose} disabled={isSubmitting}>
+          <SheetFooter className='gap-3 pt-6 sm:gap-2'>
+            <Button type='button' variant='outline' onClick={onClose} disabled={isSubmitting} className='h-11'>
               Annuler
             </Button>
-            <Button type='submit' disabled={isSubmitting}>
+            <Button type='submit' disabled={isSubmitting} className='h-11'>
               {isSubmitting ? 'Enregistrement...' : isEditing ? 'Modifier' : 'Créer'}
             </Button>
           </SheetFooter>

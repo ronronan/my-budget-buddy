@@ -22,8 +22,18 @@ import {
   IconTrendingUp,
   IconWallet,
 } from '@tabler/icons-react';
+import { useState } from 'react';
 
-import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
@@ -63,17 +73,13 @@ interface CategoryItemProps {
 }
 
 export function CategoryItem({ category, isSubcategory = false, onEdit, onDelete, onAddSubcategory, isDragging = false }: CategoryItemProps) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const IconComponent = category.icon ? ICON_MAP[category.icon] || IconShoppingCart : IconShoppingCart;
   const hasSubcategories = 'subcategories' in category && category.subcategories.length > 0;
 
-  const handleDelete = () => {
-    const confirmMessage = hasSubcategories
-      ? `Supprimer "${category.name}" et ses ${category.subcategories.length} sous-catégorie(s) ?`
-      : `Supprimer "${category.name}" ?`;
-
-    if (window.confirm(confirmMessage)) {
-      onDelete(category.id);
-    }
+  const handleDeleteConfirm = () => {
+    onDelete(category.id);
+    setShowDeleteDialog(false);
   };
 
   return (
@@ -101,16 +107,6 @@ export function CategoryItem({ category, isSubcategory = false, onEdit, onDelete
           {hasSubcategories && <p className='text-xs text-muted-foreground'>{category.subcategories.length} sous-catégorie(s)</p>}
         </div>
 
-        {/* Budget badge */}
-        {category.budget && (
-          <Badge variant='secondary'>
-            {category.budget.toLocaleString('fr-FR', {
-              style: 'currency',
-              currency: 'EUR',
-            })}
-          </Badge>
-        )}
-
         {/* Actions menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -127,12 +123,32 @@ export function CategoryItem({ category, isSubcategory = false, onEdit, onDelete
                 <DropdownMenuSeparator />
               </>
             )}
-            <DropdownMenuItem onClick={handleDelete} className='text-destructive focus:text-destructive'>
+            <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className='text-destructive focus:text-destructive'>
               Supprimer
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* Dialog de confirmation de suppression */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogDescription>
+              {hasSubcategories
+                ? `Êtes-vous sûr de vouloir supprimer "${category.name}" et ses ${category.subcategories.length} sous-catégorie(s) ? Cette action est irréversible.`
+                : `Êtes-vous sûr de vouloir supprimer "${category.name}" ? Cette action est irréversible.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className='bg-destructive text-destructive-foreground hover:bg-destructive/90'>
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Sous-catégories */}
       {hasSubcategories && (

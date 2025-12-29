@@ -63,28 +63,28 @@ export function IconPicker({ value, onChange, label }: IconPickerProps) {
   const SelectedIconComponent = selectedIcon?.icon || IconShoppingCart;
 
   return (
-    <div className='space-y-2'>
-      {label && <Label>{label}</Label>}
+    <div className='space-y-2.5'>
+      {label && <Label className='text-sm font-medium'>{label}</Label>}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <Button variant='outline' className='w-full justify-start gap-2'>
+          <Button variant='outline' className='h-11 w-full justify-start gap-2.5'>
             <SelectedIconComponent className='size-5' />
             <span>{selectedIcon?.name.replace('Icon', '') || 'Sélectionner une icône'}</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side='bottom' className='h-[400px]'>
-          <SheetHeader>
+        <SheetContent side='bottom' className='h-[450px]'>
+          <SheetHeader className='pb-4'>
             <SheetTitle>Choisir une icône</SheetTitle>
             <SheetDescription>Sélectionnez une icône pour votre catégorie</SheetDescription>
           </SheetHeader>
-          <div className='mt-4 grid grid-cols-5 gap-2'>
+          <div className='mt-6 grid grid-cols-5 gap-3'>
             {BUDGET_ICONS.map(({ name, icon: Icon }) => (
               <button
                 key={name}
                 type='button'
                 className={cn(
-                  'flex size-16 items-center justify-center rounded-md border-2 transition-all hover:bg-accent',
-                  value === name ? 'border-primary bg-accent' : 'border-transparent',
+                  'flex size-20 items-center justify-center rounded-lg border-2 transition-all hover:bg-accent hover:scale-105',
+                  value === name ? 'border-primary bg-accent ring-2 ring-primary ring-offset-2' : 'border-transparent',
                 )}
                 onClick={() => {
                   onChange(name);
@@ -92,7 +92,7 @@ export function IconPicker({ value, onChange, label }: IconPickerProps) {
                 }}
                 aria-label={name}
               >
-                <Icon className='size-8' />
+                <Icon className='size-9' />
               </button>
             ))}
           </div>
