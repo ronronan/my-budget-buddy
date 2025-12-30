@@ -74,7 +74,13 @@ export function CategoryList({ categories, onEdit, onDelete, onAddSubcategory, o
       <SortableContext items={categories.map((cat) => cat.id)} strategy={verticalListSortingStrategy}>
         <div className='space-y-2'>
           {categories.map((category) => (
-            <SortableCategoryItem key={category.id} category={category} onEdit={onEdit} onDelete={onDelete} onAddSubcategory={onAddSubcategory} />
+            <SortableCategoryItem
+              key={category.id}
+              category={category}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onAddSubcategory={onAddSubcategory}
+            />
           ))}
         </div>
       </SortableContext>

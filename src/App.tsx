@@ -6,9 +6,10 @@ import { AppSidebar } from './components/app-sidebar';
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import PageTwo from './pages/PageTwo';
 import Register from './pages/Register';
 import Settings from './pages/Settings';
+import SuiviDepense from './pages/SuiviDepense';
+import SuiviLivret from './pages/SuiviLivret';
 
 function App() {
   return (
@@ -34,7 +35,8 @@ function App() {
               <SidebarInset>
                 <Routes>
                   <Route path='/' element={<Home />} />
-                  <Route path='/two' element={<PageTwo />} />
+                  <Route path='/suivi-livret' element={<SuiviLivret />} />
+                  <Route path='/suivi-depense' element={<SuiviDepense />} />
                   <Route path='/settings' element={<Settings />} />
                 </Routes>
               </SidebarInset>

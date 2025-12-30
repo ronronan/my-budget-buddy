@@ -170,17 +170,20 @@ npm run firebase        # Accès direct à Firebase CLI
 **Process recommandé pour déployer en production** :
 
 1. **Vérification du code**
+
    ```bash
    npm run lint          # Vérifier les erreurs ESLint
    npm run prettier      # Vérifier le formatage
    ```
 
 2. **Build de production**
+
    ```bash
    npm run build         # Compile et optimise pour production
    ```
 
 3. **Commit des changements**
+
    ```bash
    git add .
    git commit -m "type: description"
@@ -197,6 +200,7 @@ npm run firebase        # Accès direct à Firebase CLI
    ```
 
 **Important** :
+
 - Toujours build avant de déployer
 - Le déploiement inclut automatiquement les règles Firestore et les index
 - URL de production : [sera fournie par Firebase après premier déploiement]

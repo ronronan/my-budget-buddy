@@ -3,7 +3,6 @@ import { type User } from 'firebase/auth';
 export interface AppUser {
   uid: string;
   email: string | null;
-  displayName: string | null;
   photoURL: string | null;
 }
 
@@ -12,7 +11,7 @@ export interface AuthContextType {
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, displayName?: string) => Promise<void>;
+  register: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
 }
@@ -24,6 +23,5 @@ export interface AuthProviderProps {
 export const mapFirebaseUser = (firebaseUser: User): AppUser => ({
   uid: firebaseUser.uid,
   email: firebaseUser.email,
-  displayName: firebaseUser.displayName,
   photoURL: firebaseUser.photoURL,
 });

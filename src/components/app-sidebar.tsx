@@ -1,4 +1,4 @@
-import { IconDashboard, IconListDetails, IconMoneybag, IconSettings } from '@tabler/icons-react';
+import { IconCash, IconDashboard, IconMoneybag, IconSettings, IconShoppingCart } from '@tabler/icons-react';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -23,9 +23,14 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: 'Page two',
-      url: '/two',
-      icon: IconListDetails,
+      title: 'Suivi Livret',
+      url: '/suivi-livret',
+      icon: IconCash,
+    },
+    {
+      title: 'Suivi Dépense',
+      url: '/suivi-depense',
+      icon: IconShoppingCart,
     },
   ],
   navSecondary: [

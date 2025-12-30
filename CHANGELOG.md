@@ -11,6 +11,59 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.5.0] - 2025-12-30
+
+### Ajouté
+
+- **Gestion des livrets**:
+  - Types Livret et LivretInput dans budget.types.ts
+  - Service livret.service.ts avec méthodes CRUD Firestore
+  - Composant LivretManager avec formulaire (nom + solde de départ)
+  - Intégration complète avec BudgetContext (état + méthodes CRUD)
+  - Optimistic updates pour UX fluide
+  - Règles Firestore pour collection livrets
+  - Onglet "Livret" dans les Paramètres
+
+- **Nouvelles pages**:
+  - Page SuiviLivret.tsx : visualisation et gestion des livrets d'épargne
+  - Page SuiviDepense.tsx : suivi des dépenses par catégorie avec statistiques
+  - Dashboard amélioré (Home.tsx) : vue d'ensemble avec cartes de résumé et actions rapides
+
+- **Navigation**:
+  - Routes `/suivi-livret` et `/suivi-depense` dans App.tsx
+  - Liens de navigation dans app-sidebar.tsx avec icônes appropriées
+  - Section "Actions rapides" dans le Dashboard
+
+### Modifié
+
+- **Pages Settings**:
+  - Remplacement de l'onglet "Profil" par "Livret"
+  - Gestion des livrets intégrée aux paramètres
+
+- **BudgetContext**:
+  - Extension avec état livrets (livrets, livretsLoading)
+  - Ajout méthodes fetchLivrets, createLivret, updateLivret, deleteLivret
+  - Chargement automatique des livrets au montage
+
+- **Firestore**:
+  - Rules mises à jour pour autoriser accès à la collection livrets
+
+- **UI/UX**:
+  - Messages informatifs pour états vides (aucun livret, aucune catégorie)
+  - Skeletons de chargement cohérents
+  - Design responsive sur toutes les nouvelles pages
+  - Notifications toast pour toutes les opérations CRUD
+
+### Supprimé
+
+- Page PageTwo.tsx (exemple inutilisé)
+- Route `/two` du routing
+- Référence à PageTwo dans app-sidebar.tsx
+
+### Notes
+
+Cette version apporte la gestion complète des livrets d'épargne avec persistance Firestore et introduit deux nouvelles pages principales pour le suivi des finances. L'application dispose maintenant d'une structure claire avec Dashboard, Suivi Livret, Suivi Dépense et Paramètres. Les fonctionnalités de base sont en place pour gérer catégories et livrets, prêtes pour l'ajout futur des transactions.
+
 ## [0.4.0] - 2025-12-27
 
 ### Ajouté

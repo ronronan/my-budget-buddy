@@ -10,7 +10,6 @@ import { useAuth } from '@/hooks/useAuth';
 export function RegisterForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -20,7 +19,7 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      await register(email, password, displayName);
+      await register(email, password);
       navigate('/');
     } catch {
       // Error déjà géré par AuthContext (toast)
@@ -37,17 +36,6 @@ export function RegisterForm() {
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className='space-y-4'>
-          <div className='space-y-2'>
-            <Label htmlFor='displayName'>Nom d'affichage</Label>
-            <Input
-              id='displayName'
-              type='text'
-              placeholder='John Doe'
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              disabled={isLoading}
-            />
-          </div>
           <div className='space-y-2'>
             <Label htmlFor='email'>Email</Label>
             <Input

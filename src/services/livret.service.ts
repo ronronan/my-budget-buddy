@@ -10,11 +10,7 @@ export const livretService = {
    * Récupère tous les livrets de l'utilisateur
    */
   async getUserLivrets(userId: string): Promise<Livret[]> {
-    const livrets = await firestoreService.query<Livret>(
-      COLLECTION_NAME,
-      where('userId', '==', userId),
-      orderBy('createdAt', 'desc'),
-    );
+    const livrets = await firestoreService.query<Livret>(COLLECTION_NAME, where('userId', '==', userId), orderBy('createdAt', 'desc'));
 
     // Convertir Timestamps en Dates
     const livretsWithDates = livrets.map((livret) => ({

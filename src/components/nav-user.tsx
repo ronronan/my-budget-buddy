@@ -1,11 +1,10 @@
-import { IconCreditCard, IconDotsVertical, IconLogout, IconNotification, IconUserCircle } from '@tabler/icons-react';
+import { IconDotsVertical, IconLogout } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -29,13 +28,7 @@ export function NavUser() {
   };
 
   // Générer initiales pour l'avatar fallback
-  const initials = user?.displayName
-    ? user.displayName
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .toUpperCase()
-    : user?.email?.[0].toUpperCase() || '?';
+  const initials = user?.email?.[0].toUpperCase() ?? '?';
 
   return (
     <SidebarMenu>
@@ -44,11 +37,10 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton size='lg' className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'>
               <Avatar className='h-8 w-8 rounded-lg'>
-                <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || ''} />
+                <AvatarImage src={user?.photoURL || undefined} alt='Profile photo' />
                 <AvatarFallback className='rounded-lg'>{initials}</AvatarFallback>
               </Avatar>
               <div className='grid flex-1 text-left text-sm leading-tight'>
-                <span className='truncate font-medium'>{user?.displayName || 'Utilisateur'}</span>
                 <span className='text-muted-foreground truncate text-xs'>{user?.email}</span>
               </div>
               <IconDotsVertical className='ml-auto size-4' />
@@ -63,30 +55,14 @@ export function NavUser() {
             <DropdownMenuLabel className='p-0 font-normal'>
               <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                 <Avatar className='h-8 w-8 rounded-lg'>
-                  <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || ''} />
+                  <AvatarImage src={user?.photoURL || undefined} alt='Profile photo' />
                   <AvatarFallback className='rounded-lg'>{initials}</AvatarFallback>
                 </Avatar>
                 <div className='grid flex-1 text-left text-sm leading-tight'>
-                  <span className='truncate font-medium'>{user?.displayName || 'Utilisateur'}</span>
                   <span className='text-muted-foreground truncate text-xs'>{user?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle />
-                Mon compte
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard />
-                Abonnement
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <IconLogout />

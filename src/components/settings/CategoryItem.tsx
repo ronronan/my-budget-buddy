@@ -35,7 +35,13 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { type Category, type CategoryWithSubcategories } from '@/types/budget.types';
 
@@ -72,7 +78,14 @@ interface CategoryItemProps {
   isDragging?: boolean;
 }
 
-export function CategoryItem({ category, isSubcategory = false, onEdit, onDelete, onAddSubcategory, isDragging = false }: CategoryItemProps) {
+export function CategoryItem({
+  category,
+  isSubcategory = false,
+  onEdit,
+  onDelete,
+  onAddSubcategory,
+  isDragging = false,
+}: CategoryItemProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const IconComponent = category.icon ? ICON_MAP[category.icon] || IconShoppingCart : IconShoppingCart;
   const hasSubcategories = 'subcategories' in category && category.subcategories.length > 0;

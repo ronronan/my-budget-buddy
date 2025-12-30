@@ -2,7 +2,9 @@ import {
   IconBuildingStore,
   IconBus,
   IconCar,
+  IconChartPie,
   IconCoffee,
+  IconCoin,
   IconCreditCard,
   IconDeviceGamepad2,
   IconFirstAidKit,
@@ -15,10 +17,8 @@ import {
   IconReceipt,
   IconShirt,
   IconShoppingCart,
-  IconWallet,
-  IconCoin,
-  IconChartPie,
   IconTrendingUp,
+  IconWallet,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 

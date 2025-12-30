@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { categorySchema, type CategoryFormData } from '@/lib/validation/category.schema';
+import { type CategoryFormData, categorySchema } from '@/lib/validation/category.schema';
 import { type Category, type CategoryInput } from '@/types/budget.types';
 
 interface CategorySheetProps {
@@ -125,11 +125,7 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
           </div>
 
           {/* Icône */}
-          <IconPicker
-            label='Icône'
-            value={formData.icon}
-            onChange={(icon) => setFormData({ ...formData, icon })}
-          />
+          <IconPicker label='Icône' value={formData.icon} onChange={(icon) => setFormData({ ...formData, icon })} />
 
           {/* Couleur */}
           <ColorPicker
@@ -149,7 +145,10 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
               <Label htmlFor='parentId' className='text-sm font-medium'>
                 Catégorie parente (optionnel)
               </Label>
-              <Select value={formData.parentId || 'none'} onValueChange={(value) => setFormData({ ...formData, parentId: value === 'none' ? undefined : value })}>
+              <Select
+                value={formData.parentId || 'none'}
+                onValueChange={(value) => setFormData({ ...formData, parentId: value === 'none' ? undefined : value })}
+              >
                 <SelectTrigger id='parentId' disabled={isSubmitting} className='h-11'>
                   <SelectValue />
                 </SelectTrigger>

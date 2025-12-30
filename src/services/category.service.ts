@@ -1,4 +1,4 @@
-import { Timestamp, orderBy, where, writeBatch, doc } from 'firebase/firestore';
+import { Timestamp, doc, orderBy, where, writeBatch } from 'firebase/firestore';
 
 import { db } from '@/config/firebase';
 import { firestoreService } from '@/services/firestore.service';
@@ -20,11 +20,7 @@ export const categoryService = {
    * Récupère toutes les catégories de l'utilisateur et les organise en hiérarchie
    */
   async getUserCategories(userId: string): Promise<CategoryWithSubcategories[]> {
-    const categories = await firestoreService.query<Category>(
-      COLLECTION_NAME,
-      where('userId', '==', userId),
-      orderBy('order', 'asc'),
-    );
+    const categories = await firestoreService.query<Category>(COLLECTION_NAME, where('userId', '==', userId), orderBy('order', 'asc'));
 
     // Convertir Timestamps en Dates
     const categoriesWithDates = categories.map((cat) => ({

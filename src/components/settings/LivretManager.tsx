@@ -93,9 +93,7 @@ export function LivretManager() {
         <CardHeader>
           <CardTitle>{isEditing ? 'Modifier le livret' : 'Nouveau livret'}</CardTitle>
           <CardDescription>
-            {isEditing
-              ? 'Modifiez les informations de votre livret'
-              : 'Ajoutez un nouveau livret à votre budget'}
+            {isEditing ? 'Modifiez les informations de votre livret' : 'Ajoutez un nouveau livret à votre budget'}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -118,9 +116,7 @@ export function LivretManager() {
                 type='number'
                 step='0.01'
                 value={formData.soldeDepart}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, soldeDepart: parseFloat(e.target.value) || 0 }))
-                }
+                onChange={(e) => setFormData((prev) => ({ ...prev, soldeDepart: parseFloat(e.target.value) || 0 }))}
                 placeholder='0.00'
                 required
               />
@@ -169,26 +165,14 @@ export function LivretManager() {
                     </div>
                     <div>
                       <h4 className='font-medium'>{livret.name}</h4>
-                      <p className='text-sm text-muted-foreground'>
-                        Solde initial : {livret.soldeDepart.toFixed(2)} €
-                      </p>
+                      <p className='text-sm text-muted-foreground'>Solde initial : {livret.soldeDepart.toFixed(2)} €</p>
                     </div>
                   </div>
                   <div className='flex gap-2'>
-                    <Button
-                      size='sm'
-                      variant='outline'
-                      onClick={() => handleEdit(livret)}
-                      disabled={isEditing && editingId !== livret.id}
-                    >
+                    <Button size='sm' variant='outline' onClick={() => handleEdit(livret)} disabled={isEditing && editingId !== livret.id}>
                       <IconEdit className='size-4' />
                     </Button>
-                    <Button
-                      size='sm'
-                      variant='outline'
-                      onClick={() => handleDeleteClick(livret.id)}
-                      disabled={isEditing}
-                    >
+                    <Button size='sm' variant='outline' onClick={() => handleDeleteClick(livret.id)} disabled={isEditing}>
                       <IconTrash className='size-4' />
                     </Button>
                   </div>
@@ -204,9 +188,7 @@ export function LivretManager() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Supprimer le livret</AlertDialogTitle>
-            <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer ce livret ? Cette action est irréversible.
-            </AlertDialogDescription>
+            <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer ce livret ? Cette action est irréversible.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Annuler</AlertDialogCancel>
