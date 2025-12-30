@@ -5,6 +5,9 @@ service cloud.firestore {
     match /categories/{document=**} {
       allow read, write: if request.auth.uid != null;
     }
+    match /livrets/{document=**} {
+      allow read, write: if request.auth.uid != null;
+    }
     match /{document=**} {
       allow read, write: if false;
     }

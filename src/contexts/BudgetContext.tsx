@@ -3,7 +3,8 @@ import { toast } from 'sonner';
 
 import { useAuth } from '@/hooks/useAuth';
 import { categoryService } from '@/services/category.service';
-import { type CategoryInput, type CategoryWithSubcategories } from '@/types/budget.types';
+import { livretService } from '@/services/livret.service';
+import { type CategoryInput, type CategoryWithSubcategories, type Livret, type LivretInput } from '@/types/budget.types';
 
 interface BudgetContextType {
   categories: CategoryWithSubcategories[];
@@ -15,6 +16,13 @@ interface BudgetContextType {
   updateCategory: (id: string, data: Partial<CategoryInput>) => Promise<void>;
   deleteCategory: (id: string) => Promise<void>;
   reorderCategories: (categoryIds: string[]) => Promise<void>;
+
+  livrets: Livret[];
+  livretsLoading: boolean;
+  fetchLivrets: () => Promise<void>;
+  createLivret: (data: LivretInput) => Promise<void>;
+  updateLivret: (id: string, data: Partial<LivretInput>) => Promise<void>;
+  deleteLivret: (id: string) => Promise<void>;
 }
 
 interface BudgetProviderProps {
@@ -27,6 +35,10 @@ export function BudgetProvider({ children }: BudgetProviderProps) {
   const [categories, setCategories] = useState<CategoryWithSubcategories[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [livrets, setLivrets] = useState<Livret[]>([]);
+  const [livretsLoading, setLivretsLoading] = useState(false);
+
   const { user } = useAuth();
 
   const fetchCategories = useCallback(async () => {
@@ -206,6 +218,105 @@ export function BudgetProvider({ children }: BudgetProviderProps) {
     }
   };
 
+  // ========== LIVRETS ==========
+
+  const fetchLivrets = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      setLivretsLoading(true);
+      const userLivrets = await livretService.getUserLivrets(user.uid);
+      setLivrets(userLivrets);
+    } catch (err) {
+      console.error('Error fetching livrets:', err);
+      const message = 'Erreur lors du chargement des livrets';
+      toast.error(message);
+    } finally {
+      setLivretsLoading(false);
+    }
+  }, [user]);
+
+  // Charger les livrets au montage et quand l'utilisateur change
+  useEffect(() => {
+    if (user) {
+      fetchLivrets();
+    } else {
+      setLivrets([]);
+    }
+  }, [user, fetchLivrets]);
+
+  const createLivret = async (data: LivretInput) => {
+    if (!user) return;
+
+    try {
+      // Optimistic update
+      const tempId = `temp-${Date.now()}`;
+      const tempLivret: Livret = {
+        id: tempId,
+        userId: user.uid,
+        name: data.name,
+        soldeDepart: data.soldeDepart,
+        createdAt: new Date(),
+      };
+
+      setLivrets((prev) => [tempLivret, ...prev]);
+
+      // Créer dans Firestore
+      await livretService.createLivret(user.uid, data);
+      toast.success('Livret créé');
+
+      // Recharger pour avoir l'ID réel
+      await fetchLivrets();
+    } catch (err) {
+      console.error('Error creating livret:', err);
+      const message = err instanceof Error ? err.message : 'Erreur lors de la création du livret';
+      toast.error(message);
+      // Rollback optimistic update
+      await fetchLivrets();
+      throw err;
+    }
+  };
+
+  const updateLivret = async (id: string, data: Partial<LivretInput>) => {
+    if (!user) return;
+
+    try {
+      // Optimistic update
+      setLivrets((prev) => prev.map((livret) => (livret.id === id ? { ...livret, ...data } : livret)));
+
+      // Mettre à jour dans Firestore
+      await livretService.updateLivret(id, data);
+      toast.success('Livret modifié');
+    } catch (err) {
+      console.error('Error updating livret:', err);
+      const message = 'Erreur lors de la modification du livret';
+      toast.error(message);
+      // Rollback
+      await fetchLivrets();
+      throw err;
+    }
+  };
+
+  const deleteLivret = async (id: string) => {
+    if (!user) return;
+
+    try {
+      // Optimistic update
+      setLivrets((prev) => prev.filter((livret) => livret.id !== id));
+
+      // Supprimer dans Firestore
+      await livretService.deleteLivret(id);
+      toast.success('Livret supprimé');
+    } catch (err) {
+      console.error('Error deleting livret:', err);
+      const message = 'Erreur lors de la suppression du livret';
+      toast.error(message);
+      // Rollback
+      await fetchLivrets();
+      throw err;
+    }
+  };
+
   const value: BudgetContextType = {
     categories,
     loading,
@@ -215,6 +326,12 @@ export function BudgetProvider({ children }: BudgetProviderProps) {
     updateCategory,
     deleteCategory,
     reorderCategories,
+    livrets,
+    livretsLoading,
+    fetchLivrets,
+    createLivret,
+    updateLivret,
+    deleteLivret,
   };
 
   return <BudgetContext.Provider value={value}>{children}</BudgetContext.Provider>;

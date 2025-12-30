@@ -42,3 +42,17 @@ export interface BudgetSummary {
   balance: number;
   categoriesBreakdown: Record<string, number>;
 }
+
+export interface Livret {
+  id: string;
+  userId: string;
+  name: string;
+  soldeDepart: number;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+export interface LivretInput {
+  name: string;
+  soldeDepart: number;
+}

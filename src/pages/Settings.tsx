@@ -1,4 +1,5 @@
 import { CategoryManager } from '@/components/settings/CategoryManager';
+import { LivretManager } from '@/components/settings/LivretManager';
 import { SiteHeader } from '@/components/site-header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -14,15 +15,15 @@ export default function Page() {
             <Tabs defaultValue='categories' className='w-full'>
               <TabsList>
                 <TabsTrigger value='categories'>Catégories</TabsTrigger>
-                <TabsTrigger value='profile'>Profil</TabsTrigger>
+                <TabsTrigger value='livret'>Livret</TabsTrigger>
               </TabsList>
 
               <TabsContent value='categories' className='space-y-4'>
                 <CategoryManager />
               </TabsContent>
 
-              <TabsContent value='profile' className='space-y-4'>
-                <p className='text-sm text-muted-foreground'>Section Profil à implémenter</p>
+              <TabsContent value='livret' className='space-y-4'>
+                <LivretManager />
               </TabsContent>
             </Tabs>
           </div>
