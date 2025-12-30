@@ -11,6 +11,27 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.7.1] - 2025-12-30
+
+### Corrigé
+
+- **Affichage des icônes sur la page Budget Annuel**:
+  - Les icônes des catégories et sous-catégories s'affichaient comme du texte brut au lieu de composants React
+  - Création de src/lib/iconMap.tsx avec fonction utilitaire getIconComponent()
+  - Mise à jour de BudgetAnnuel.tsx pour utiliser les composants d'icônes réels
+  - Refactorisation de CategoryItem.tsx pour utiliser l'utilitaire centralisé
+  - Suppression de la duplication de code pour la map des icônes
+
+### Modifié
+
+- **Architecture**:
+  - Centralisation de la map des icônes dans lib/iconMap.tsx pour réutilisabilité
+  - Amélioration de la cohérence du code entre les composants
+
+### Notes
+
+Cette version corrige un bug d'affichage où les noms d'icônes (ex: "IconShoppingCart") étaient rendus comme du texte au lieu des composants React correspondants sur la page Budget Annuel. La solution centralise la logique de conversion des noms d'icônes en composants dans un utilitaire réutilisable.
+
 ## [0.7.0] - 2025-12-30
 
 ### Ajouté

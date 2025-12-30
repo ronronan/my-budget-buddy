@@ -9,6 +9,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useBudget } from '@/hooks/useBudget';
+import { getIconComponent } from '@/lib/iconMap';
 import { MONTH_NAMES, type MonthlyBudget, createEmptyMonthlyBudget } from '@/types/budget.types';
 
 export default function BudgetAnnuel() {
@@ -124,13 +125,14 @@ export default function BudgetAnnuel() {
               <Accordion type='single' collapsible className='space-y-3'>
                 {parentCategories.map((category) => {
                   const parentTotal = calculateParentTotal(category.id);
+                  const CategoryIcon = getIconComponent(category.icon);
 
                   return (
                     <AccordionItem key={category.id} value={category.id} className='rounded-lg border bg-card'>
                       <AccordionTrigger className='px-4 hover:no-underline'>
                         <div className='flex flex-1 items-center justify-between pr-4'>
                           <div className='flex items-center gap-3'>
-                            {category.icon && <span className='text-xl'>{category.icon}</span>}
+                            <CategoryIcon className='size-6' style={{ color: category.color }} />
                             <div className='flex flex-col items-start'>
                               <span className='font-medium'>{category.name}</span>
                               <span className='text-xs text-muted-foreground'>{category.subcategories.length} sous-catégories</span>
@@ -156,13 +158,14 @@ export default function BudgetAnnuel() {
                               initializeBudget(subcat.id, subcat.monthlyBudgets);
                               const currentBudget = editingBudgets[subcat.id] || subcat.monthlyBudgets || createEmptyMonthlyBudget();
                               const yearlyTotal = calculateYearlyTotal(currentBudget);
+                              const SubcatIcon = getIconComponent(subcat.icon);
 
                               return (
                                 <Card key={subcat.id}>
                                   <CardHeader className='pb-3'>
                                     <div className='flex items-center justify-between'>
                                       <div className='flex items-center gap-2'>
-                                        {subcat.icon && <span>{subcat.icon}</span>}
+                                        <SubcatIcon className='size-5' style={{ color: subcat.color }} />
                                         <CardTitle className='text-base'>{subcat.name}</CardTitle>
                                       </div>
                                       <span className='text-sm font-semibold text-muted-foreground'>{yearlyTotal.toFixed(2)} € / an</span>

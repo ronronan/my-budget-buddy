@@ -1,27 +1,4 @@
-import {
-  IconBuildingStore,
-  IconBus,
-  IconCar,
-  IconChartPie,
-  IconCoffee,
-  IconCoin,
-  IconCreditCard,
-  IconDeviceGamepad2,
-  IconDotsVertical,
-  IconFirstAidKit,
-  IconGasStation,
-  IconGift,
-  IconGripVertical,
-  IconHome,
-  IconMoneybag,
-  IconPigMoney,
-  IconPlane,
-  IconReceipt,
-  IconShirt,
-  IconShoppingCart,
-  IconTrendingUp,
-  IconWallet,
-} from '@tabler/icons-react';
+import { IconDotsVertical, IconGripVertical } from '@tabler/icons-react';
 import { useState } from 'react';
 
 import {
@@ -42,32 +19,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { getIconComponent } from '@/lib/iconMap';
 import { cn } from '@/lib/utils';
 import { type Category, type CategoryWithSubcategories } from '@/types/budget.types';
-
-// Map des icônes
-const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
-  IconShoppingCart,
-  IconCar,
-  IconHome,
-  IconDeviceGamepad2,
-  IconFirstAidKit,
-  IconMoneybag,
-  IconCreditCard,
-  IconWallet,
-  IconPigMoney,
-  IconReceipt,
-  IconGasStation,
-  IconBus,
-  IconCoffee,
-  IconShirt,
-  IconBuildingStore,
-  IconPlane,
-  IconGift,
-  IconCoin,
-  IconChartPie,
-  IconTrendingUp,
-};
 
 interface CategoryItemProps {
   category: CategoryWithSubcategories | Category;
@@ -87,7 +41,7 @@ export function CategoryItem({
   isDragging = false,
 }: CategoryItemProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const IconComponent = category.icon ? ICON_MAP[category.icon] || IconShoppingCart : IconShoppingCart;
+  const IconComponent = getIconComponent(category.icon);
   const hasSubcategories = 'subcategories' in category && category.subcategories.length > 0;
 
   const handleDeleteConfirm = () => {
