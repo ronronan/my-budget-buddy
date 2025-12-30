@@ -9,7 +9,7 @@ export default function Page() {
       <SiteHeader />
       <div className='flex flex-1 flex-col'>
         <div className='@container/main flex flex-1 flex-col gap-2'>
-          <div className='flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-4 lg:px-6'>
+          <div className='flex flex-col gap-3 py-3 px-3 md:gap-4 md:py-4 md:px-4 lg:gap-6 lg:py-6 lg:px-6'>
             <Tabs defaultValue='categories' className='w-full'>
               <TabsList>
                 <TabsTrigger value='categories'>Catégories</TabsTrigger>

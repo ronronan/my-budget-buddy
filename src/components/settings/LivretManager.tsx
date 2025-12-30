@@ -122,13 +122,13 @@ export function LivretManager() {
               />
             </div>
 
-            <div className='flex gap-2'>
-              <Button type='submit'>
+            <div className='flex flex-col sm:flex-row gap-2'>
+              <Button type='submit' className='w-full sm:w-auto'>
                 <IconPlus className='mr-2 size-4' />
                 {isEditing ? 'Enregistrer' : 'Ajouter'}
               </Button>
               {isEditing && (
-                <Button type='button' variant='outline' onClick={handleCancelEdit}>
+                <Button type='button' variant='outline' onClick={handleCancelEdit} className='w-full sm:w-auto'>
                   Annuler
                 </Button>
               )}
@@ -169,10 +169,10 @@ export function LivretManager() {
                     </div>
                   </div>
                   <div className='flex gap-2'>
-                    <Button size='sm' variant='outline' onClick={() => handleEdit(livret)} disabled={isEditing && editingId !== livret.id}>
+                    <Button size='default' variant='outline' onClick={() => handleEdit(livret)} disabled={isEditing && editingId !== livret.id} className='h-10 w-10 p-0'>
                       <IconEdit className='size-4' />
                     </Button>
-                    <Button size='sm' variant='outline' onClick={() => handleDeleteClick(livret.id)} disabled={isEditing}>
+                    <Button size='default' variant='outline' onClick={() => handleDeleteClick(livret.id)} disabled={isEditing} className='h-10 w-10 p-0'>
                       <IconTrash className='size-4' />
                     </Button>
                   </div>

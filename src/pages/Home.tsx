@@ -14,9 +14,9 @@ export default function Page() {
       <SiteHeader />
       <div className='flex flex-1 flex-col'>
         <div className='@container/main flex flex-1 flex-col gap-2'>
-          <div className='flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-4 lg:px-6'>
+          <div className='flex flex-col gap-3 py-3 px-3 md:gap-4 md:py-4 md:px-4 lg:gap-6 lg:py-6 lg:px-6'>
             {/* Cartes de résumé */}
-            <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+            <div className='grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
               <Card>
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
                   <CardTitle className='text-sm font-medium'>Livrets configurés</CardTitle>
@@ -61,7 +61,7 @@ export default function Page() {
                 <CardTitle>Actions rapides</CardTitle>
                 <CardDescription>Accédez rapidement aux fonctionnalités principales</CardDescription>
               </CardHeader>
-              <CardContent className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+              <CardContent className='grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
                 <Link to='/suivi-livret'>
                   <Button variant='outline' className='w-full justify-start'>
                     <IconCash className='mr-2 size-4' />

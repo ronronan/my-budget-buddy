@@ -14,16 +14,16 @@ export default function Page() {
       <SiteHeader />
       <div className='flex flex-1 flex-col'>
         <div className='@container/main flex flex-1 flex-col gap-2'>
-          <div className='flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-4 lg:px-6'>
+          <div className='flex flex-col gap-3 py-3 px-3 md:gap-4 md:py-4 md:px-4 lg:gap-6 lg:py-6 lg:px-6'>
             <div className='flex items-center justify-end'>
-              <Button>
+              <Button className='w-full sm:w-auto'>
                 <IconPlus className='mr-2 size-4' />
                 Ajouter une opération
               </Button>
             </div>
 
             {livretsLoading ? (
-              <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+              <div className='grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
                 <Skeleton className='h-32' />
                 <Skeleton className='h-32' />
                 <Skeleton className='h-32' />
@@ -38,7 +38,7 @@ export default function Page() {
                 </CardContent>
               </Card>
             ) : (
-              <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+              <div className='grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
                 {livrets.map((livret) => (
                   <Card key={livret.id}>
                     <CardHeader>

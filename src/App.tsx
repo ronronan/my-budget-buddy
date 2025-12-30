@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 import { AppSidebar } from './components/app-sidebar';
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar';
@@ -12,6 +13,8 @@ import SuiviDepense from './pages/SuiviDepense';
 import SuiviLivret from './pages/SuiviLivret';
 
 function App() {
+  const isMobile = useIsMobile();
+
   return (
     <Routes>
       {/* Routes publiques */}
@@ -24,6 +27,7 @@ function App() {
         element={
           <ProtectedRoute>
             <SidebarProvider
+              defaultOpen={!isMobile}
               style={
                 {
                   '--sidebar-width': 'calc(var(--spacing) * 72)',

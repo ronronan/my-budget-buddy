@@ -11,6 +11,48 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.6.0] - 2025-12-30
+
+### Ajouté
+
+- **Optimisations Mobile-First**:
+  - Sidebar fermée par défaut sur mobile avec détection automatique
+  - Hook useIsMobile() intégré dans App.tsx pour adaptation responsive
+  - Breakpoints cohérents (mobile < 640px, tablet 640px+, desktop 1024px+)
+
+### Modifié
+
+- **Layouts responsive**:
+  - Espacements réduits sur mobile (py-3 px-3 gap-3) progressifs jusqu'au desktop
+  - Grilles adaptatives : 1 colonne (mobile) → 2 colonnes (tablet) → 3 colonnes (desktop)
+  - Tous les paddings et gaps optimisés par breakpoint dans toutes les pages
+
+- **Header mobile-friendly**:
+  - Titre réduit sur mobile (text-sm) avec taille progressive
+  - Description cachée sur très petit écran (< 640px)
+  - Texte tronqué pour éviter débordement
+  - Padding réduit sur mobile (px-3 → px-4 → px-6)
+
+- **Boutons et zones tactiles**:
+  - Boutons d'action full-width sur mobile (w-full sm:w-auto)
+  - Taille minimale 44px pour zones tactiles (conformité Apple/Google)
+  - Boutons formulaire en colonne sur mobile, en ligne sur desktop
+  - Espacement tactile optimal entre boutons (gap-2 minimum)
+
+- **Formulaires optimisés**:
+  - LivretManager avec boutons adaptatifs (colonne mobile → ligne desktop)
+  - Boutons d'édition/suppression agrandis (h-10 w-10 pour meilleure zone tactile)
+
+- **Pages optimisées**:
+  - Home.tsx : grilles et cartes responsive
+  - SuiviLivret.tsx : layout mobile-first avec bouton full-width
+  - SuiviDepense.tsx : statistiques en colonne sur mobile
+  - Settings.tsx : espacements réduits sur mobile
+
+### Notes
+
+Cette version transforme l'application en expérience mobile-first complète. L'interface est maintenant parfaitement utilisable sur smartphone avec des zones tactiles optimales (≥ 44px), des espacements adaptés et une sidebar non intrusive. Les breakpoints cohérents assurent une progression fluide de mobile à desktop.
+
 ## [0.5.0] - 2025-12-30
 
 ### Ajouté
