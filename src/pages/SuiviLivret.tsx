@@ -15,11 +15,7 @@ export default function Page() {
       <div className='flex flex-1 flex-col'>
         <div className='@container/main flex flex-1 flex-col gap-2'>
           <div className='flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-4 lg:px-6'>
-            <div className='flex items-center justify-between'>
-              <div>
-                <h1 className='text-2xl font-bold'>Suivi des livrets</h1>
-                <p className='text-sm text-muted-foreground'>Consultez le solde et l'évolution de vos livrets d'épargne</p>
-              </div>
+            <div className='flex items-center justify-end'>
               <Button>
                 <IconPlus className='mr-2 size-4' />
                 Ajouter une opération
