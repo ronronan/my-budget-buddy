@@ -1,4 +1,4 @@
-import { IconCash, IconDashboard, IconMoneybag, IconSettings, IconShoppingCart } from '@tabler/icons-react';
+import { IconCalculator, IconCash, IconDashboard, IconMoneybag, IconSettings, IconShoppingCart } from '@tabler/icons-react';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -21,6 +21,11 @@ const data = {
       title: 'Dashboard',
       url: '/',
       icon: IconDashboard,
+    },
+    {
+      title: 'Budget Annuel',
+      url: '/budget-annuel',
+      icon: IconCalculator,
     },
     {
       title: 'Suivi Livret',

@@ -11,6 +11,49 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.7.0] - 2025-12-30
+
+### Ajouté
+
+- **Gestion des budgets annuels**:
+  - Page BudgetAnnuel.tsx avec interface accordéon par catégorie parent
+  - Type MonthlyBudget pour gérer 12 budgets mensuels par catégorie (janvier à décembre)
+  - Fonction helper createEmptyMonthlyBudget() pour initialisation
+  - Constante MONTH_NAMES pour affichage des mois en français
+  - Composant Accordion shadcn/ui installé
+  - Route `/budget-annuel` dans App.tsx
+  - Lien "Budget Annuel" dans la sidebar avec icône IconCalculator
+
+- **Fonctionnalités de la page Budget Annuel**:
+  - Cartes accordéon pour chaque catégorie parent
+  - Affichage automatique des sous-catégories avec leurs budgets mensuels
+  - Édition inline des 12 montants mensuels par sous-catégorie (inputs numériques)
+  - Calcul automatique du total annuel par sous-catégorie
+  - Calcul automatique du budget parent (somme des budgets des enfants)
+  - Bouton "Sauvegarder" affiché uniquement lorsqu'il y a des modifications
+  - Optimistic updates pour UX fluide
+  - Affichage responsive avec grilles adaptatives (2/3/4/6 colonnes selon breakpoint)
+
+### Modifié
+
+- **Types Budget**:
+  - Category.budget marqué comme @deprecated (compatibilité rétroactive)
+  - Category.monthlyBudgets ajouté (type MonthlyBudget optionnel)
+  - CategoryInput.budget marqué comme @deprecated
+  - CategoryInput.monthlyBudgets ajouté
+
+- **Services Firestore**:
+  - category.service.ts : support de monthlyBudgets dans createCategory
+  - Ancien champ budget conservé pour compatibilité rétroactive
+
+- **Navigation**:
+  - app-sidebar.tsx : ajout de IconCalculator dans les imports
+  - app-sidebar.tsx : nouveau lien "Budget Annuel" placé en 2ème position (après Dashboard)
+
+### Notes
+
+Cette version introduit la gestion complète des budgets annuels avec planification mensuelle. Les utilisateurs peuvent désormais définir des budgets mensuels pour chaque sous-catégorie sur les 12 mois de l'année. Les catégories parents affichent automatiquement la somme des budgets de leurs sous-catégories, assurant une cohérence dans la planification budgétaire. L'interface en accordéon permet une navigation intuitive et une vue d'ensemble claire de la répartition budgétaire annuelle.
+
 ## [0.6.0] - 2025-12-30
 
 ### Ajouté

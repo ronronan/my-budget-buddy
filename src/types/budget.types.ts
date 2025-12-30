@@ -11,13 +11,49 @@ export interface Transaction {
   updatedAt: Date;
 }
 
+// Budget mensuel : 12 montants pour l'année (janvier = 1, décembre = 12)
+export type MonthlyBudget = Record<number, number>;
+
+// Helper pour créer un budget mensuel vide
+export const createEmptyMonthlyBudget = (): MonthlyBudget => ({
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0,
+  6: 0,
+  7: 0,
+  8: 0,
+  9: 0,
+  10: 0,
+  11: 0,
+  12: 0,
+});
+
+// Noms des mois pour affichage
+export const MONTH_NAMES = [
+  'Janvier',
+  'Février',
+  'Mars',
+  'Avril',
+  'Mai',
+  'Juin',
+  'Juillet',
+  'Août',
+  'Septembre',
+  'Octobre',
+  'Novembre',
+  'Décembre',
+];
+
 export interface Category {
   id: string;
   userId: string;
   name: string;
   color: string;
   icon?: string;
-  budget?: number;
+  budget?: number; // @deprecated - utilisé uniquement pour compatibilité rétroactive
+  monthlyBudgets?: MonthlyBudget; // Budgets mensuels pour l'année
   parentId: string | null;
   order: number;
   createdAt: Date;
@@ -32,7 +68,8 @@ export interface CategoryInput {
   name: string;
   color: string;
   icon?: string;
-  budget?: number;
+  budget?: number; // @deprecated
+  monthlyBudgets?: MonthlyBudget;
   parentId?: string | null;
 }
 

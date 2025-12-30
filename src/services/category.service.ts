@@ -73,7 +73,8 @@ export const categoryService = {
       name: data.name,
       color: data.color,
       icon: data.icon || null,
-      budget: data.budget || null,
+      budget: data.budget || null, // @deprecated - pour compatibilité rétroactive
+      monthlyBudgets: data.monthlyBudgets || null,
       parentId: data.parentId || null,
       order: newOrder,
     };

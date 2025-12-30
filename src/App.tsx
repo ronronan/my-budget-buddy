@@ -5,6 +5,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 import { AppSidebar } from './components/app-sidebar';
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar';
+import BudgetAnnuel from './pages/BudgetAnnuel';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -39,6 +40,7 @@ function App() {
               <SidebarInset>
                 <Routes>
                   <Route path='/' element={<Home />} />
+                  <Route path='/budget-annuel' element={<BudgetAnnuel />} />
                   <Route path='/suivi-livret' element={<SuiviLivret />} />
                   <Route path='/suivi-depense' element={<SuiviDepense />} />
                   <Route path='/settings' element={<Settings />} />
