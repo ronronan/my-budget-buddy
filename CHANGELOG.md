@@ -11,6 +11,46 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.8.0] - 2025-12-31
+
+### Ajouté
+
+- **Budget Annuel - Sélecteur d'année**:
+  - Ajout d'un sélecteur pour choisir l'année du budget (par défaut année courante)
+  - Plage d'années disponibles : 2 ans dans le passé jusqu'à 5 ans dans le futur
+  - Nouveau type `YearlyBudgets` pour stocker les budgets de plusieurs années
+  - Helpers `getBudgetForYear()` et `updateBudgetForYear()` pour accès/mise à jour par année
+  - Migration automatique depuis `monthlyBudgets` (déprécié) vers `yearlyBudgets`
+
+- **Budget Annuel - Remplissage automatique**:
+  - Bouton "Remplir depuis" avec sélecteur de mois de référence
+  - Rempli automatiquement tous les mois à 0 avec la valeur du mois choisi
+  - Notifications toast pour feedback utilisateur (erreurs, succès, info)
+  - Validation : le mois de référence doit avoir une valeur non nulle
+
+### Modifié
+
+- **Amélioration UX mobile**:
+  - Ajout de `inputMode="decimal"` sur les inputs de budget pour clavier numérique optimisé
+  - Limitation automatique des valeurs à 2 décimales (arrondi)
+  - Meilleure gestion des valeurs vides et invalides dans les inputs
+
+- **Architecture des types**:
+  - Ajout du champ `yearlyBudgets?: YearlyBudgets` dans `Category`
+  - Dépréciation de `monthlyBudgets` (maintenu pour compatibilité rétroactive)
+  - Mise à jour de `CategoryInput` pour supporter `yearlyBudgets`
+
+### Corrigé
+
+- **ESLint - Composants créés pendant le render**:
+  - Correction de CategoryItem.tsx pour éviter la création de composants pendant le render
+  - Utilisation de `React.createElement()` au lieu de stocker le composant dans une variable
+  - Résolution de l'erreur `react-hooks/static-components`
+
+### Notes
+
+Cette version transforme la page Budget Annuel en un outil multi-années complet avec remplissage automatique des budgets mensuels et une meilleure expérience utilisateur sur mobile. Les budgets sont maintenant organisés par année, permettant une planification à long terme.
+
 ## [0.7.1] - 2025-12-30
 
 ### Corrigé

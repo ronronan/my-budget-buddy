@@ -1,5 +1,5 @@
 import { IconDotsVertical, IconGripVertical } from '@tabler/icons-react';
-import { useState } from 'react';
+import { createElement, useState } from 'react';
 
 import {
   AlertDialog,
@@ -41,7 +41,6 @@ export function CategoryItem({
   isDragging = false,
 }: CategoryItemProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const IconComponent = getIconComponent(category.icon);
   const hasSubcategories = 'subcategories' in category && category.subcategories.length > 0;
 
   const handleDeleteConfirm = () => {
@@ -65,7 +64,7 @@ export function CategoryItem({
 
         {/* Icône */}
         <div className='flex size-10 shrink-0 items-center justify-center rounded-md' style={{ backgroundColor: category.color + '20' }}>
-          <IconComponent className='size-6' style={{ color: category.color }} />
+          {createElement(getIconComponent(category.icon), { className: 'size-6', style: { color: category.color } })}
         </div>
 
         {/* Nom */}

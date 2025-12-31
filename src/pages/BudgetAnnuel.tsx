@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconCalculator, IconDeviceFloppy } from '@tabler/icons-react';
+import { IconCalculator, IconDeviceFloppy, IconCopy } from '@tabler/icons-react';
 import { toast } from 'sonner';
 
 import { SiteHeader } from '@/components/site-header';
@@ -8,36 +8,89 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useBudget } from '@/hooks/useBudget';
 import { getIconComponent } from '@/lib/iconMap';
-import { MONTH_NAMES, type MonthlyBudget, createEmptyMonthlyBudget } from '@/types/budget.types';
+import {
+  MONTH_NAMES,
+  type MonthlyBudget,
+  createEmptyMonthlyBudget,
+  getBudgetForYear,
+  updateBudgetForYear,
+} from '@/types/budget.types';
 
 export default function BudgetAnnuel() {
   const { categories, updateCategory, loading } = useBudget();
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear);
   const [editingBudgets, setEditingBudgets] = useState<Record<string, MonthlyBudget>>({});
   const [hasChanges, setHasChanges] = useState(false);
 
-  // Initialiser les budgets à éditer
-  const initializeBudget = (categoryId: string, currentBudget?: MonthlyBudget) => {
+  // Générer une liste d'années (année courante - 2 à année courante + 5)
+  const yearOptions = Array.from({ length: 8 }, (_, i) => currentYear - 2 + i);
+
+  // Initialiser les budgets à éditer pour l'année sélectionnée
+  const initializeBudget = (categoryId: string) => {
     if (!editingBudgets[categoryId]) {
-      setEditingBudgets((prev) => ({
-        ...prev,
-        [categoryId]: currentBudget || createEmptyMonthlyBudget(),
-      }));
+      const category = categories.find((c) => c.id === categoryId);
+      if (category) {
+        const budgetForYear = getBudgetForYear(category, selectedYear);
+        setEditingBudgets((prev) => ({
+          ...prev,
+          [categoryId]: budgetForYear,
+        }));
+      }
     }
   };
 
   // Mettre à jour un montant mensuel
   const updateMonthlyBudget = (categoryId: string, month: number, value: string) => {
-    const numValue = parseFloat(value) || 0;
+    // Gérer la valeur vide ou invalide
+    const numValue = value === '' ? 0 : parseFloat(value);
+    const finalValue = isNaN(numValue) ? 0 : Math.round(numValue * 100) / 100; // Limiter à 2 décimales
+
     setEditingBudgets((prev) => ({
       ...prev,
       [categoryId]: {
         ...(prev[categoryId] || createEmptyMonthlyBudget()),
-        [month]: numValue,
+        [month]: finalValue,
       },
     }));
     setHasChanges(true);
+  };
+
+  // Remplir automatiquement tous les mois à 0 avec la valeur d'un mois de référence
+  const fillFromReferenceMonth = (categoryId: string, referenceMonth: number) => {
+    const currentBudget = editingBudgets[categoryId] || createEmptyMonthlyBudget();
+    const referenceValue = currentBudget[referenceMonth] || 0;
+
+    if (referenceValue === 0) {
+      toast.error('Le mois de référence doit avoir une valeur non nulle');
+      return;
+    }
+
+    const updatedBudget = { ...currentBudget };
+    let filledCount = 0;
+
+    // Remplir tous les mois à 0 avec la valeur de référence
+    for (let month = 1; month <= 12; month++) {
+      if (updatedBudget[month] === 0) {
+        updatedBudget[month] = referenceValue;
+        filledCount++;
+      }
+    }
+
+    if (filledCount === 0) {
+      toast.info('Tous les mois ont déjà une valeur');
+      return;
+    }
+
+    setEditingBudgets((prev) => ({
+      ...prev,
+      [categoryId]: updatedBudget,
+    }));
+    setHasChanges(true);
+    toast.success(`${filledCount} mois remplis avec ${referenceValue.toFixed(2)} €`);
   };
 
   // Calculer le total annuel d'une catégorie
@@ -60,9 +113,14 @@ export default function BudgetAnnuel() {
   // Sauvegarder tous les changements
   const saveAllChanges = async () => {
     try {
-      const updates = Object.entries(editingBudgets).map(([categoryId, monthlyBudgets]) =>
-        updateCategory(categoryId, { monthlyBudgets }),
-      );
+      const updates = Object.entries(editingBudgets).map(([categoryId, monthlyBudgets]) => {
+        const category = categories.find((c) => c.id === categoryId);
+        if (!category) return Promise.resolve();
+
+        // Mettre à jour yearlyBudgets avec le budget de l'année sélectionnée
+        const yearlyBudgets = updateBudgetForYear(category, selectedYear, monthlyBudgets);
+        return updateCategory(categoryId, { yearlyBudgets });
+      });
 
       await Promise.all(updates);
       toast.success('Budgets mis à jour avec succès');
@@ -95,18 +153,39 @@ export default function BudgetAnnuel() {
         <div className='@container/main flex flex-1 flex-col gap-2'>
           <div className='flex flex-col gap-3 py-3 px-3 md:gap-4 md:py-4 md:px-4 lg:gap-6 lg:py-6 lg:px-6'>
             {/* En-tête */}
-            <div className='flex flex-col gap-2'>
-              <div className='flex items-center justify-between'>
+            <div className='flex flex-col gap-3'>
+              <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
                 <div>
                   <h1 className='text-2xl font-bold tracking-tight'>Budget Annuel</h1>
-                  <p className='text-sm text-muted-foreground'>Configurez vos budgets mensuels pour l'année en cours</p>
+                  <p className='text-sm text-muted-foreground'>Configurez vos budgets mensuels par année</p>
                 </div>
-                {hasChanges && (
-                  <Button onClick={saveAllChanges} size='sm'>
-                    <IconDeviceFloppy className='mr-2 size-4' />
-                    Sauvegarder
-                  </Button>
-                )}
+                <div className='flex items-center gap-2'>
+                  <Select
+                    value={selectedYear.toString()}
+                    onValueChange={(value) => {
+                      setSelectedYear(parseInt(value));
+                      setEditingBudgets({}); // Réinitialiser les budgets en édition
+                      setHasChanges(false);
+                    }}
+                  >
+                    <SelectTrigger className='w-32'>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {yearOptions.map((year) => (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {hasChanges && (
+                    <Button onClick={saveAllChanges} size='sm'>
+                      <IconDeviceFloppy className='mr-2 size-4' />
+                      Sauvegarder
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -155,20 +234,35 @@ export default function BudgetAnnuel() {
                         ) : (
                           <div className='space-y-4'>
                             {category.subcategories.map((subcat) => {
-                              initializeBudget(subcat.id, subcat.monthlyBudgets);
-                              const currentBudget = editingBudgets[subcat.id] || subcat.monthlyBudgets || createEmptyMonthlyBudget();
+                              initializeBudget(subcat.id);
+                              const currentBudget = editingBudgets[subcat.id] || getBudgetForYear(subcat, selectedYear);
                               const yearlyTotal = calculateYearlyTotal(currentBudget);
                               const SubcatIcon = getIconComponent(subcat.icon);
 
                               return (
                                 <Card key={subcat.id}>
                                   <CardHeader className='pb-3'>
-                                    <div className='flex items-center justify-between'>
+                                    <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
                                       <div className='flex items-center gap-2'>
                                         <SubcatIcon className='size-5' style={{ color: subcat.color }} />
                                         <CardTitle className='text-base'>{subcat.name}</CardTitle>
                                       </div>
-                                      <span className='text-sm font-semibold text-muted-foreground'>{yearlyTotal.toFixed(2)} € / an</span>
+                                      <div className='flex items-center gap-2'>
+                                        <span className='text-sm font-semibold text-muted-foreground'>{yearlyTotal.toFixed(2)} € / an</span>
+                                        <Select onValueChange={(value) => fillFromReferenceMonth(subcat.id, parseInt(value))}>
+                                          <SelectTrigger className='h-8 w-auto gap-1 text-xs'>
+                                            <IconCopy className='size-3.5' />
+                                            <span className='hidden sm:inline'>Remplir depuis</span>
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {MONTH_NAMES.map((monthName, index) => (
+                                              <SelectItem key={index + 1} value={(index + 1).toString()}>
+                                                {monthName}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
                                     </div>
                                   </CardHeader>
                                   <CardContent>
@@ -183,6 +277,7 @@ export default function BudgetAnnuel() {
                                             <Input
                                               id={`${subcat.id}-${monthNumber}`}
                                               type='number'
+                                              inputMode='decimal'
                                               min='0'
                                               step='0.01'
                                               value={currentBudget[monthNumber] || 0}
