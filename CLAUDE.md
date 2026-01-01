@@ -17,15 +17,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Les opérations destructives (git push --force, rm -rf, etc.) nécessitent toujours une confirmation
 - Les modifications de configuration système restent soumises à approbation
 
-**Workflow automatique pour chaque instruction** (depuis 2025-12-30):
+**Workflow automatique pour chaque instruction** (depuis 2026-01-01):
 
-**IMPORTANT**: À chaque instruction de l'utilisateur, effectuer automatiquement ces trois actions :
+**IMPORTANT**: À chaque instruction de l'utilisateur, effectuer automatiquement ces étapes dans l'ordre :
 
-1. **Commit** : Créer un commit avec message descriptif des changements
-2. **Update CHANGELOG** : Mettre à jour CHANGELOG.md avec nouvelle version si changements significatifs
-3. **Push** : Pousser les commits sur origin/main
+1. **Vérifications qualité** :
+   - Exécuter `npm run prettier` pour vérifier le formatage
+   - Exécuter `npm run lint` pour vérifier les erreurs ESLint
+   - Exécuter `npm run type-check` pour vérifier les erreurs TypeScript
+   - Si des erreurs sont détectées, les corriger avant de continuer
 
-Cette politique assure un versioning continu et un historique Git à jour en permanence.
+2. **Versioning** (si changements significatifs) :
+   - Mettre à jour CHANGELOG.md avec la nouvelle version et les changements
+   - Mettre à jour la version dans package.json pour correspondre au CHANGELOG
+   - Exécuter `npm install` pour mettre à jour package-lock.json avec la nouvelle version
+
+3. **Commit** :
+   - Créer un commit avec message descriptif des changements
+
+4. **Push** :
+   - Pousser les commits sur origin/main
+
+Cette politique assure un versioning continu, une qualité de code constante et un historique Git à jour en permanence.
 
 ## Project Overview
 

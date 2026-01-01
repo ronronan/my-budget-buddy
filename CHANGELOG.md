@@ -11,6 +11,24 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.8.3] - 2026-01-01
+
+### Modifié
+
+- **Workflow automatique Claude Code**:
+  - Ajout de vérifications qualité avant chaque commit :
+    - `npm run prettier` pour vérifier le formatage
+    - `npm run lint` pour vérifier les erreurs ESLint
+    - `npm run type-check` pour vérifier les erreurs TypeScript
+  - Correction automatique des erreurs détectées avant commit
+  - Synchronisation automatique des versions entre CHANGELOG.md et package.json
+  - Mise à jour automatique de package-lock.json via `npm install`
+  - Documentation complète du nouveau workflow dans CLAUDE.md
+
+### Notes
+
+Cette version améliore le workflow de développement en ajoutant des vérifications automatiques de qualité de code avant chaque commit. Cela garantit que le code poussé sur le dépôt est toujours formaté correctement, sans erreurs de lint et sans erreurs de type. Les versions sont maintenant synchronisées entre CHANGELOG.md et package.json.
+
 ## [0.8.2] - 2026-01-01
 
 ### Modifié

@@ -1,11 +1,12 @@
 {
   "name": "my-budget-buddy",
   "private": true,
-  "version": "0.8.0",
+  "version": "0.8.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "type-check": "tsc -b",
     "lint": "eslint --cache .",
     "lint:fix": "eslint --cache --fix .",
     "prettier": "prettier --check --cache .",
