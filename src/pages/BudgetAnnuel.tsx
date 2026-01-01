@@ -14,6 +14,8 @@ import { getIconComponent } from '@/lib/iconMap';
 import {
   MONTH_NAMES,
   type MonthlyBudget,
+  type Category,
+  type CategoryWithSubcategories,
   createEmptyMonthlyBudget,
   getBudgetForYear,
   updateBudgetForYear,
@@ -114,7 +116,19 @@ export default function BudgetAnnuel() {
   const saveAllChanges = async () => {
     try {
       const updates = Object.entries(editingBudgets).map(([categoryId, monthlyBudgets]) => {
-        const category = categories.find((c) => c.id === categoryId);
+        // Chercher la catégorie dans les parents et les sous-catégories
+        let category: CategoryWithSubcategories | Category | undefined = categories.find((c) => c.id === categoryId);
+        if (!category) {
+          // Si pas trouvé dans les parents, chercher dans les sous-catégories
+          for (const parent of categories) {
+            const subcategory = parent.subcategories.find((sub) => sub.id === categoryId);
+            if (subcategory) {
+              category = subcategory;
+              break;
+            }
+          }
+        }
+
         if (!category) return Promise.resolve();
 
         // Mettre à jour yearlyBudgets avec le budget de l'année sélectionnée

@@ -11,6 +11,21 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.8.1] - 2026-01-01
+
+### Corrigé
+
+- **Budget Annuel - Sauvegarde des budgets**:
+  - Correction de la fonction `saveAllChanges()` qui ne trouvait pas les sous-catégories
+  - Le code cherchait uniquement dans les catégories parents lors de la sauvegarde
+  - Ajout de la recherche dans les sous-catégories de chaque parent
+  - Ajout des imports manquants (`Category`, `CategoryWithSubcategories`)
+  - La mise à jour des budgets mensuels fonctionne maintenant correctement
+
+### Notes
+
+Cette version corrige un bug critique empêchant la sauvegarde des budgets mensuels sur la page Budget Annuel. Les utilisateurs peuvent désormais modifier et sauvegarder leurs budgets sans problème.
+
 ## [0.8.0] - 2025-12-31
 
 ### Ajouté
