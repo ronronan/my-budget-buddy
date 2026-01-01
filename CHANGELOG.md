@@ -11,6 +11,28 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.8.2] - 2026-01-01
+
+### Modifié
+
+- **Optimisation du build de production**:
+  - Ajout de code splitting manuel pour réduire la taille des chunks
+  - Séparation des grosses dépendances dans des chunks distincts :
+    - `react` : React core et react-dom (11.79 kB)
+    - `react-router` : React Router DOM (35.61 kB)
+    - `firebase` : Firebase app, auth et firestore (344.64 kB)
+    - `radix-ui` : Tous les composants Radix UI (159.45 kB)
+    - `recharts` : Bibliothèque de visualisation de données
+    - `icons` : Tabler Icons et Lucide React (13.93 kB)
+    - `tanstack` : TanStack Table
+  - Augmentation de `chunkSizeWarningLimit` à 1000 kB
+  - Amélioration du cache navigateur (chunks vendors stables)
+  - Réduction de l'avertissement "chunks larger than 500 kB"
+
+### Notes
+
+Cette version optimise le build de production en séparant les grosses dépendances dans des chunks distincts. Cela améliore les performances de chargement grâce à un meilleur cache navigateur et à un chargement parallèle des fichiers.
+
 ## [0.8.1] - 2026-01-01
 
 ### Ajouté
