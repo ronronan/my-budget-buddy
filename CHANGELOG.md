@@ -11,6 +11,53 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.9.0] - 2026-01-01
+
+### Ajouté
+
+- **Suivi mensuel des livrets** :
+  - Enregistrement des soldes de fin de mois par livret et par année (2024-2031)
+  - Sélecteur d'année pour naviguer entre les périodes
+  - Grille de saisie responsive avec 12 inputs mensuels par livret
+  - Fonction "Remplir depuis" pour dupliquer rapidement un mois de référence sur les mois vides
+  - Sauvegarde en batch avec optimistic updates et gestion d'erreurs
+  - Affichage du solde de départ pour chaque livret
+  - Interface adaptative (2/3/4/6 colonnes selon la taille d'écran)
+
+- **Graphique d'évolution de la trésorerie** :
+  - Visualisation de la trésorerie totale (somme de tous les livrets) par mois
+  - Courbe d'évolution mensuelle avec Recharts (LineChart)
+  - Statistiques automatiques : minimum, maximum et moyenne de trésorerie
+  - Support complet du mode sombre/clair avec CSS variables
+  - Gestion des mois sans données (pas de connexion de points)
+  - Empty state informatif si aucune donnée pour l'année sélectionnée
+  - Formatage monétaire cohérent (tooltip, axes, statistiques)
+
+- **Nouveaux types et helpers** :
+  - Types `MonthlySoldes` et `YearlySoldes` pour structurer les soldes mensuels
+  - Helpers `createEmptyMonthlySoldes()`, `getSoldesForYear()`, `updateSoldesForYear()`
+  - Helper `getSoldeEffectif()` pour calculer le solde d'un mois avec gestion des valeurs nulles
+  - Extension des interfaces `Livret` et `LivretInput` avec champ `yearlySoldes` (optionnel)
+
+### Modifié
+
+- **Page "Suivi des Livrets" complètement refactorisée** :
+  - Nouvelle interface avec graphique en première position
+  - Pattern de gestion d'état similaire à BudgetAnnuel (editingSoldes, hasChanges)
+  - Réutilisation du composant wrapper `ChartContainer` pour cohérence visuelle
+  - Messages d'état clairs et informatifs (loading, empty states, toasts de succès/erreur)
+
+### Technique
+
+- **Compatibilité rétroactive garantie** : Les livrets existants sans `yearlySoldes` fonctionnent automatiquement avec soldes vides
+- **Première utilisation de Recharts en production** : Graphique interactif avec thème adaptatif
+- **Aucune migration de base de données requise** : Le champ `yearlySoldes` est optionnel
+- **Pattern réutilisé** : Suivi identique au système de budgets mensuels des catégories pour cohérence
+
+### Notes
+
+Cette version majeure (0.9.0) introduit une fonctionnalité complète de suivi de trésorerie avec visualisation graphique. Le pattern de budgets mensuels utilisé pour les catégories a été adapté pour les livrets, garantissant cohérence architecturale et maintenabilité. C'est également la première utilisation de Recharts dans l'application, ouvrant la voie à d'autres visualisations futures.
+
 ## [0.8.5] - 2026-01-01
 
 ### Corrigé

@@ -56,6 +56,56 @@ export const updateBudgetForYear = (category: Category, year: number, monthlyBud
   };
 };
 
+// Soldes mensuels des livrets : 12 soldes pour l'année (janvier = 1, décembre = 12)
+export type MonthlySoldes = Record<number, number>;
+
+// Soldes annuels : année => soldes mensuels
+export type YearlySoldes = Record<number, MonthlySoldes>;
+
+// Helper pour créer des soldes mensuels vides (initialisés à 0)
+export const createEmptyMonthlySoldes = (): MonthlySoldes => ({
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0,
+  6: 0,
+  7: 0,
+  8: 0,
+  9: 0,
+  10: 0,
+  11: 0,
+  12: 0,
+});
+
+// Helper pour obtenir les soldes d'une année spécifique
+export const getSoldesForYear = (livret: Livret, year: number): MonthlySoldes => {
+  // Si yearlySoldes existe, retourner les soldes de l'année demandée
+  if (livret.yearlySoldes && livret.yearlySoldes[year]) {
+    return livret.yearlySoldes[year];
+  }
+  // Sinon, retourner des soldes vides
+  return createEmptyMonthlySoldes();
+};
+
+// Helper pour mettre à jour les soldes d'une année
+export const updateSoldesForYear = (livret: Livret, year: number, monthlySoldes: MonthlySoldes): YearlySoldes => {
+  const yearlySoldes = livret.yearlySoldes || {};
+  return {
+    ...yearlySoldes,
+    [year]: monthlySoldes,
+  };
+};
+
+// Helper pour calculer le solde effectif d'un mois donné
+// Retourne null si le mois n'est pas renseigné (solde = 0)
+export const getSoldeEffectif = (livret: Livret, year: number, month: number): number | null => {
+  const monthlySoldes = getSoldesForYear(livret, year);
+  const solde = monthlySoldes[month];
+  // Si le solde est 0, considérer comme non renseigné
+  return solde === 0 ? null : solde;
+};
+
 // Noms des mois pour affichage
 export const MONTH_NAMES = [
   'Janvier',
@@ -113,6 +163,7 @@ export interface Livret {
   userId: string;
   name: string;
   soldeDepart: number;
+  yearlySoldes?: YearlySoldes; // Soldes mensuels par année
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -120,4 +171,5 @@ export interface Livret {
 export interface LivretInput {
   name: string;
   soldeDepart: number;
+  yearlySoldes?: YearlySoldes; // Soldes mensuels par année
 }
