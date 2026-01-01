@@ -11,6 +11,20 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.8.5] - 2026-01-01
+
+### Corrigé
+
+- **Bug Budget Annuel - Réinitialisation des valeurs**:
+  - Correction du bug où les valeurs des champs de budget repassaient à 0 lors de la modification
+  - Suppression de l'appel à `initializeBudget()` pendant le rendu qui causait des setState non désirés
+  - Simplification de la logique en utilisant un fallback direct sans effet de bord
+  - Les modifications de budget sont maintenant stables et ne se réinitialisent plus
+
+### Notes
+
+Cette version corrige un bug critique qui empêchait les utilisateurs de modifier correctement leurs budgets mensuels. Le problème était causé par un setState déclenché pendant le rendu du composant, provoquant des réinitialisations inattendues.
+
 ## [0.8.4] - 2026-01-01
 
 ### Ajouté

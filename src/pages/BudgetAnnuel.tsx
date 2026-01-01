@@ -31,20 +31,6 @@ export default function BudgetAnnuel() {
   // Générer une liste d'années (année courante - 2 à année courante + 5)
   const yearOptions = Array.from({ length: 8 }, (_, i) => currentYear - 2 + i);
 
-  // Initialiser les budgets à éditer pour l'année sélectionnée
-  const initializeBudget = (categoryId: string) => {
-    if (!editingBudgets[categoryId]) {
-      const category = categories.find((c) => c.id === categoryId);
-      if (category) {
-        const budgetForYear = getBudgetForYear(category, selectedYear);
-        setEditingBudgets((prev) => ({
-          ...prev,
-          [categoryId]: budgetForYear,
-        }));
-      }
-    }
-  };
-
   // Mettre à jour un montant mensuel
   const updateMonthlyBudget = (categoryId: string, month: number, value: string) => {
     // Gérer la valeur vide ou invalide
@@ -256,7 +242,6 @@ export default function BudgetAnnuel() {
                         ) : (
                           <div className='space-y-4'>
                             {category.subcategories.map((subcat) => {
-                              initializeBudget(subcat.id);
                               const currentBudget = editingBudgets[subcat.id] || getBudgetForYear(subcat, selectedYear);
                               const yearlyTotal = calculateYearlyTotal(currentBudget);
                               const SubcatIcon = getIconComponent(subcat.icon);
