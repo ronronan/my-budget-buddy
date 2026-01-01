@@ -13,6 +13,14 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [0.8.1] - 2026-01-01
 
+### Ajouté
+
+- **Budget Annuel - Budget moyen mensuel**:
+  - Affichage du budget moyen mensuel à côté du budget annuel
+  - Calcul automatique : total annuel / 12
+  - Visible sur les catégories parents et les sous-catégories
+  - Aide à visualiser le budget mensuel moyen planifié
+
 ### Corrigé
 
 - **Budget Annuel - Sauvegarde des budgets**:
@@ -22,9 +30,14 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
   - Ajout des imports manquants (`Category`, `CategoryWithSubcategories`)
   - La mise à jour des budgets mensuels fonctionne maintenant correctement
 
+- **Budget Annuel - Calcul du budget parent**:
+  - Correction de `calculateParentTotal()` qui utilisait le champ déprécié `monthlyBudgets`
+  - Utilisation de `getBudgetForYear()` pour récupérer le bon budget selon l'année sélectionnée
+  - Le total des catégories parents se met maintenant à jour correctement lors de modifications
+
 ### Notes
 
-Cette version corrige un bug critique empêchant la sauvegarde des budgets mensuels sur la page Budget Annuel. Les utilisateurs peuvent désormais modifier et sauvegarder leurs budgets sans problème.
+Cette version corrige des bugs critiques sur la page Budget Annuel et ajoute l'affichage du budget moyen mensuel. Les totaux des catégories parents se mettent maintenant à jour correctement et les utilisateurs peuvent visualiser facilement le budget mensuel moyen pour chaque catégorie.
 
 ## [0.8.0] - 2025-12-31
 

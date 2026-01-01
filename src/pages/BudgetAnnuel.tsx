@@ -107,9 +107,14 @@ export default function BudgetAnnuel() {
     if (!category || !category.subcategories.length) return 0;
 
     return category.subcategories.reduce((sum, subcat) => {
-      const budget = editingBudgets[subcat.id] || subcat.monthlyBudgets;
+      const budget = editingBudgets[subcat.id] || getBudgetForYear(subcat, selectedYear);
       return sum + calculateYearlyTotal(budget);
     }, 0);
+  };
+
+  // Calculer le budget moyen mensuel
+  const calculateMonthlyAverage = (yearlyTotal: number): number => {
+    return yearlyTotal / 12;
   };
 
   // Sauvegarder tous les changements
@@ -231,12 +236,15 @@ export default function BudgetAnnuel() {
                               <span className='text-xs text-muted-foreground'>{category.subcategories.length} sous-catégories</span>
                             </div>
                           </div>
-                          <div className='flex items-center gap-2'>
+                          <div className='flex flex-col items-end gap-1'>
                             <span
                               className='rounded-full px-3 py-1 text-sm font-semibold'
                               style={{ backgroundColor: category.color + '20', color: category.color }}
                             >
                               {parentTotal.toFixed(2)} € / an
+                            </span>
+                            <span className='text-xs text-muted-foreground'>
+                              {calculateMonthlyAverage(parentTotal).toFixed(2)} € / mois
                             </span>
                           </div>
                         </div>
@@ -262,7 +270,10 @@ export default function BudgetAnnuel() {
                                         <CardTitle className='text-base'>{subcat.name}</CardTitle>
                                       </div>
                                       <div className='flex items-center gap-2'>
-                                        <span className='text-sm font-semibold text-muted-foreground'>{yearlyTotal.toFixed(2)} € / an</span>
+                                        <div className='flex flex-col items-end'>
+                                          <span className='text-sm font-semibold text-muted-foreground'>{yearlyTotal.toFixed(2)} € / an</span>
+                                          <span className='text-xs text-muted-foreground'>{calculateMonthlyAverage(yearlyTotal).toFixed(2)} € / mois</span>
+                                        </div>
                                         <Select onValueChange={(value) => fillFromReferenceMonth(subcat.id, parseInt(value))}>
                                           <SelectTrigger className='h-8 w-auto gap-1 text-xs'>
                                             <IconCopy className='size-3.5' />
