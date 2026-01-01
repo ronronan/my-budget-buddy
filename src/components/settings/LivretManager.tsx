@@ -169,10 +169,22 @@ export function LivretManager() {
                     </div>
                   </div>
                   <div className='flex gap-2'>
-                    <Button size='default' variant='outline' onClick={() => handleEdit(livret)} disabled={isEditing && editingId !== livret.id} className='h-10 w-10 p-0'>
+                    <Button
+                      size='default'
+                      variant='outline'
+                      onClick={() => handleEdit(livret)}
+                      disabled={isEditing && editingId !== livret.id}
+                      className='h-10 w-10 p-0'
+                    >
                       <IconEdit className='size-4' />
                     </Button>
-                    <Button size='default' variant='outline' onClick={() => handleDeleteClick(livret.id)} disabled={isEditing} className='h-10 w-10 p-0'>
+                    <Button
+                      size='default'
+                      variant='outline'
+                      onClick={() => handleDeleteClick(livret.id)}
+                      disabled={isEditing}
+                      className='h-10 w-10 p-0'
+                    >
                       <IconTrash className='size-4' />
                     </Button>
                   </div>

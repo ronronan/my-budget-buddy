@@ -20,6 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Workflow automatique pour chaque instruction** (depuis 2025-12-30):
 
 **IMPORTANT**: À chaque instruction de l'utilisateur, effectuer automatiquement ces trois actions :
+
 1. **Commit** : Créer un commit avec message descriptif des changements
 2. **Update CHANGELOG** : Mettre à jour CHANGELOG.md avec nouvelle version si changements significatifs
 3. **Push** : Pousser les commits sur origin/main

@@ -1,21 +1,21 @@
+import { IconCalculator, IconCopy, IconDeviceFloppy } from '@tabler/icons-react';
 import { useState } from 'react';
-import { IconCalculator, IconDeviceFloppy, IconCopy } from '@tabler/icons-react';
 import { toast } from 'sonner';
 
 import { SiteHeader } from '@/components/site-header';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useBudget } from '@/hooks/useBudget';
 import { getIconComponent } from '@/lib/iconMap';
 import {
-  MONTH_NAMES,
-  type MonthlyBudget,
   type Category,
   type CategoryWithSubcategories,
+  MONTH_NAMES,
+  type MonthlyBudget,
   createEmptyMonthlyBudget,
   getBudgetForYear,
   updateBudgetForYear,
@@ -271,8 +271,12 @@ export default function BudgetAnnuel() {
                                       </div>
                                       <div className='flex items-center gap-2'>
                                         <div className='flex flex-col items-end'>
-                                          <span className='text-sm font-semibold text-muted-foreground'>{yearlyTotal.toFixed(2)} € / an</span>
-                                          <span className='text-xs text-muted-foreground'>{calculateMonthlyAverage(yearlyTotal).toFixed(2)} € / mois</span>
+                                          <span className='text-sm font-semibold text-muted-foreground'>
+                                            {yearlyTotal.toFixed(2)} € / an
+                                          </span>
+                                          <span className='text-xs text-muted-foreground'>
+                                            {calculateMonthlyAverage(yearlyTotal).toFixed(2)} € / mois
+                                          </span>
                                         </div>
                                         <Select onValueChange={(value) => fillFromReferenceMonth(subcat.id, parseInt(value))}>
                                           <SelectTrigger className='h-8 w-auto gap-1 text-xs'>

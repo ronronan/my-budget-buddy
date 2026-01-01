@@ -48,11 +48,7 @@ export const getBudgetForYear = (category: Category, year: number): MonthlyBudge
 };
 
 // Helper pour mettre à jour le budget d'une année
-export const updateBudgetForYear = (
-  category: Category,
-  year: number,
-  monthlyBudget: MonthlyBudget,
-): YearlyBudgets => {
+export const updateBudgetForYear = (category: Category, year: number, monthlyBudget: MonthlyBudget): YearlyBudgets => {
   const yearlyBudgets = category.yearlyBudgets || {};
   return {
     ...yearlyBudgets,

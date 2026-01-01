@@ -4,8 +4,8 @@ import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 
 const PAGE_TITLES: Record<string, { title: string; description?: string }> = {
-  '/': { title: 'Dashboard', description: 'Vue d\'ensemble de votre budget' },
-  '/suivi-livret': { title: 'Suivi des livrets', description: 'Gérez vos livrets d\'épargne' },
+  '/': { title: 'Dashboard', description: "Vue d'ensemble de votre budget" },
+  '/suivi-livret': { title: 'Suivi des livrets', description: "Gérez vos livrets d'épargne" },
   '/suivi-depense': { title: 'Suivi des dépenses', description: 'Analysez vos dépenses' },
   '/settings': { title: 'Paramètres', description: 'Configurez votre application' },
 };
@@ -21,9 +21,7 @@ export function SiteHeader() {
         <Separator orientation='vertical' className='mx-1 md:mx-2 data-[orientation=vertical]:h-4' />
         <div className='min-w-0 flex-1'>
           <h1 className='text-sm font-medium md:text-base truncate'>{pageInfo.title}</h1>
-          {pageInfo.description && (
-            <p className='text-xs text-muted-foreground hidden sm:block truncate'>{pageInfo.description}</p>
-          )}
+          {pageInfo.description && <p className='text-xs text-muted-foreground hidden sm:block truncate'>{pageInfo.description}</p>}
         </div>
       </div>
     </header>
