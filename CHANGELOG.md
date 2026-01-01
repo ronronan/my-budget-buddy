@@ -11,6 +11,22 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.8.4] - 2026-01-01
+
+### Ajouté
+
+- **Workflow automatique - Tags et Releases GitHub**:
+  - Ajout de l'étape de création de tag git annoté après le push
+  - Création automatique de releases GitHub avec `gh release create`
+  - Extraction automatique des notes de release depuis CHANGELOG.md
+  - Les releases GitHub sont maintenant créées automatiquement avec documentation complète
+  - Format des tags : `v{VERSION}` (ex: v0.8.4)
+  - Chaque release contient les détails complets des changements de la version
+
+### Notes
+
+Cette version complète le workflow automatique en ajoutant la création de tags git et de releases GitHub. Chaque version publiée sera désormais automatiquement taggée et documentée sur GitHub avec les notes de release extraites du CHANGELOG.
+
 ## [0.8.3] - 2026-01-01
 
 ### Modifié

@@ -38,7 +38,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 4. **Push** :
    - Pousser les commits sur origin/main
 
-Cette politique assure un versioning continu, une qualité de code constante et un historique Git à jour en permanence.
+5. **Tag Git** (si versioning effectué) :
+   - Créer un tag git annoté avec la version : `git tag -a v{VERSION} -m "Release v{VERSION}"`
+   - Pousser le tag sur origin : `git push origin v{VERSION}`
+
+6. **Release GitHub** (si versioning effectué) :
+   - Créer une release GitHub avec `gh release create v{VERSION}`
+   - Titre de la release : `v{VERSION}`
+   - Notes de release : Extraire la section correspondante du CHANGELOG.md
+   - Cela crée automatiquement une release visible sur GitHub avec les détails des changements
+
+Cette politique assure un versioning continu, une qualité de code constante, un historique Git à jour en permanence et des releases GitHub automatiques avec documentation complète.
 
 ## Project Overview
 
