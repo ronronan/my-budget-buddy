@@ -4,7 +4,15 @@ import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { categoryService } from '@/services/category.service';
 import { livretService } from '@/services/livret.service';
-import { type CategoryInput, type CategoryWithSubcategories, type Livret, type LivretInput } from '@/types/budget.types';
+import { transactionService } from '@/services/transaction.service';
+import {
+  type CategoryInput,
+  type CategoryWithSubcategories,
+  type Livret,
+  type LivretInput,
+  type TransactionInput,
+  type TransactionWithCategories,
+} from '@/types/budget.types';
 
 interface BudgetContextType {
   categories: CategoryWithSubcategories[];
@@ -23,6 +31,14 @@ interface BudgetContextType {
   createLivret: (data: LivretInput) => Promise<void>;
   updateLivret: (id: string, data: Partial<LivretInput>) => Promise<void>;
   deleteLivret: (id: string) => Promise<void>;
+
+  transactions: TransactionWithCategories[];
+  transactionsLoading: boolean;
+  transactionsError: string | null;
+  fetchTransactions: () => Promise<void>;
+  createTransaction: (data: TransactionInput) => Promise<void>;
+  updateTransaction: (id: string, data: Partial<TransactionInput>) => Promise<void>;
+  deleteTransaction: (id: string) => Promise<void>;
 }
 
 interface BudgetProviderProps {
@@ -38,6 +54,10 @@ export function BudgetProvider({ children }: BudgetProviderProps) {
 
   const [livrets, setLivrets] = useState<Livret[]>([]);
   const [livretsLoading, setLivretsLoading] = useState(false);
+
+  const [transactions, setTransactions] = useState<TransactionWithCategories[]>([]);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
+  const [transactionsError, setTransactionsError] = useState<string | null>(null);
 
   const { user } = useAuth();
 
@@ -317,6 +337,145 @@ export function BudgetProvider({ children }: BudgetProviderProps) {
     }
   };
 
+  // ========== TRANSACTIONS ==========
+
+  const fetchTransactions = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      setTransactionsLoading(true);
+      setTransactionsError(null);
+
+      const userTransactions = await transactionService.getUserTransactions(user.uid);
+      const enriched = await transactionService.enrichTransactionsWithCategories(userTransactions, user.uid);
+      setTransactions(enriched);
+    } catch (err) {
+      console.error('Error fetching transactions:', err);
+      const message = 'Erreur lors du chargement des transactions';
+      setTransactionsError(message);
+      toast.error(message);
+    } finally {
+      setTransactionsLoading(false);
+    }
+  }, [user]);
+
+  // Charger les transactions au montage et quand l'utilisateur change
+  useEffect(() => {
+    if (user) {
+      fetchTransactions();
+    } else {
+      setTransactions([]);
+    }
+  }, [user, fetchTransactions]);
+
+  const createTransaction = async (data: TransactionInput) => {
+    if (!user) return;
+
+    try {
+      setTransactionsError(null);
+
+      // Optimistic update
+      const tempId = `temp-${Date.now()}`;
+
+      // Enrichir les détails des catégories pour l'optimistic update
+      const categoriesDetails = await Promise.all(
+        data.splits.map(async (split) => {
+          const allCategories = [...categories, ...categories.flatMap((c) => c.subcategories)];
+          const category = allCategories.find((c) => c.id === split.categoryId);
+          return {
+            categoryId: split.categoryId,
+            categoryName: category?.name || 'Catégorie supprimée',
+            categoryColor: category?.color || '#9ca3af',
+            categoryIcon: category?.icon,
+            amount: split.amount,
+          };
+        }),
+      );
+
+      const tempTransaction: TransactionWithCategories = {
+        id: tempId,
+        userId: user.uid,
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        categoriesDetails,
+      };
+
+      setTransactions((prev) => [tempTransaction, ...prev]);
+
+      // Créer dans Firestore
+      await transactionService.createTransaction(user.uid, data);
+      toast.success('Transaction créée');
+
+      // Recharger pour avoir l'ID réel
+      await fetchTransactions();
+    } catch (err) {
+      console.error('Error creating transaction:', err);
+      const message = err instanceof Error ? err.message : 'Erreur lors de la création de la transaction';
+      setTransactionsError(message);
+      toast.error(message);
+      // Rollback
+      await fetchTransactions();
+      throw err;
+    }
+  };
+
+  const updateTransaction = async (id: string, data: Partial<TransactionInput>) => {
+    if (!user) return;
+
+    try {
+      setTransactionsError(null);
+
+      // Optimistic update
+      setTransactions((prev) =>
+        prev.map((transaction) => {
+          if (transaction.id === id) {
+            return { ...transaction, ...data };
+          }
+          return transaction;
+        }),
+      );
+
+      // Mettre à jour dans Firestore
+      await transactionService.updateTransaction(id, user.uid, data);
+      toast.success('Transaction modifiée');
+
+      // Recharger pour avoir les données enrichies
+      await fetchTransactions();
+    } catch (err) {
+      console.error('Error updating transaction:', err);
+      const message = 'Erreur lors de la modification de la transaction';
+      setTransactionsError(message);
+      toast.error(message);
+      // Rollback
+      await fetchTransactions();
+      throw err;
+    }
+  };
+
+  const deleteTransaction = async (id: string) => {
+    if (!user) return;
+
+    try {
+      setTransactionsError(null);
+
+      // Optimistic update
+      setTransactions((prev) => prev.filter((transaction) => transaction.id !== id));
+
+      // Supprimer dans Firestore
+      await transactionService.deleteTransaction(id);
+      toast.success('Transaction supprimée');
+    } catch (err) {
+      console.error('Error deleting transaction:', err);
+      const message = 'Erreur lors de la suppression de la transaction';
+      setTransactionsError(message);
+      toast.error(message);
+      // Rollback
+      await fetchTransactions();
+      throw err;
+    }
+  };
+
   const value: BudgetContextType = {
     categories,
     loading,
@@ -332,6 +491,13 @@ export function BudgetProvider({ children }: BudgetProviderProps) {
     createLivret,
     updateLivret,
     deleteLivret,
+    transactions,
+    transactionsLoading,
+    transactionsError,
+    fetchTransactions,
+    createTransaction,
+    updateTransaction,
+    deleteTransaction,
   };
 
   return <BudgetContext.Provider value={value}>{children}</BudgetContext.Provider>;

@@ -11,6 +11,56 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.10.0] - 2026-01-03
+
+### Ajouté
+
+- **Suivi des transactions avec support des splits** :
+  - Création de transactions de revenus ou dépenses
+  - Association à une ou plusieurs sous-catégories (mode splits)
+  - Formulaire intelligent avec deux modes :
+    - **Mode simple** : montant + 1 catégorie
+    - **Mode splits** : division du montant entre plusieurs catégories avec validation en temps réel
+  - Affichage du montant restant à allouer en mode splits
+  - Filtres avancés : type (revenus/dépenses), catégorie, période (mois/année/tout)
+  - Liste des transactions avec badges de catégories colorés
+  - Édition et suppression avec confirmation
+  - Calcul automatique des statistiques du mois en cours
+  - Validation stricte : somme des splits = montant total, sous-catégories uniquement
+  - Optimistic updates pour UX réactive
+  - Intégration complète avec Firebase Firestore
+
+- **Nouveaux composants** :
+  - `TransactionSheet` : Formulaire avancé avec modes simple/splits
+  - `TransactionList` : Liste avec filtres et actions (modifier/supprimer)
+
+- **Nouveaux services** :
+  - `transaction.service.ts` : CRUD complet avec validation métier
+  - Méthodes de requête (par période, par catégorie, par type)
+  - Enrichissement automatique avec détails des catégories
+  - Calcul des statistiques (revenus, dépenses, solde, répartition)
+
+- **Nouveaux types** :
+  - `TransactionSplit` : Division par catégorie
+  - `Transaction` : Modèle avec support des splits
+  - `TransactionInput` : Type pour création/modification
+  - `TransactionWithCategories` : Version enrichie pour l'UI
+  - Helpers : `createSimpleTransaction()`, `validateTransactionSplits()`
+
+- **Validation Zod** :
+  - Schéma pour mode simple (`simpleTransactionSchema`)
+  - Schéma pour mode splits (`splitTransactionSchema`) avec validation personnalisée de la somme
+  - Messages d'erreur en français
+
+- **Sécurité Firestore** :
+  - Règles de sécurité pour collection `transactions`
+  - Validation côté serveur : userId, structure des données, montants positifs
+
+- **Mise à jour page Suivi Dépense** :
+  - Remplacement des statistiques fictives par vraies données
+  - Intégration du formulaire et de la liste de transactions
+  - Calcul en temps réel des totaux du mois en cours
+
 ## [0.9.1] - 2026-01-03
 
 ### Corrigé

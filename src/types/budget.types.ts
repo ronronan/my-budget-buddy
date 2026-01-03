@@ -1,15 +1,69 @@
-// Types pour les données budget (à adapter selon besoins)
+// Type pour un split de transaction (division entre plusieurs catégories)
+export interface TransactionSplit {
+  categoryId: string; // ID de la sous-catégorie
+  amount: number; // Montant pour cette catégorie
+}
+
+// Transaction complète (version avec support des splits)
 export interface Transaction {
   id: string;
   userId: string;
-  amount: number;
-  category: string;
+  totalAmount: number;
   description: string;
   date: Date;
   type: 'income' | 'expense';
+  splits: TransactionSplit[]; // Divisions par catégorie
+
+  // @deprecated - Compatibilité rétroactive
+  category?: string;
+  amount?: number;
+
   createdAt: Date;
   updatedAt: Date;
 }
+
+// Type pour input de création/modification (sans id, timestamps, userId)
+export interface TransactionInput {
+  totalAmount: number;
+  description: string;
+  date: Date;
+  type: 'income' | 'expense';
+  splits: TransactionSplit[];
+}
+
+// Type étendu pour l'UI avec les détails des catégories
+export interface TransactionWithCategories extends Transaction {
+  categoriesDetails: {
+    categoryId: string;
+    categoryName: string;
+    categoryColor: string;
+    categoryIcon?: string;
+    amount: number;
+  }[];
+}
+
+// Helper pour créer une transaction simple (1 catégorie)
+export const createSimpleTransaction = (
+  amount: number,
+  categoryId: string,
+  description: string,
+  date: Date,
+  type: 'income' | 'expense',
+): TransactionInput => ({
+  totalAmount: amount,
+  description,
+  date,
+  type,
+  splits: [{ categoryId, amount }],
+});
+
+// Helper pour valider qu'une transaction a des splits valides
+export const validateTransactionSplits = (transaction: TransactionInput): boolean => {
+  if (transaction.splits.length === 0) return false;
+  const sumSplits = transaction.splits.reduce((sum, split) => sum + split.amount, 0);
+  // Comparer avec une tolérance pour éviter les problèmes de précision flottante
+  return Math.abs(sumSplits - transaction.totalAmount) < 0.01;
+};
 
 // Budget mensuel : 12 montants pour l'année (janvier = 1, décembre = 12)
 export type MonthlyBudget = Record<number, number>;

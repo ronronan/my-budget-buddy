@@ -1,19 +1,51 @@
 import { IconPlus, IconShoppingCart, IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
+import { useState } from 'react';
 
 import { SiteHeader } from '@/components/site-header';
+import { TransactionList } from '@/components/transactions/TransactionList';
+import { TransactionSheet } from '@/components/transactions/TransactionSheet';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useBudget } from '@/hooks/useBudget';
+import { type TransactionInput, type TransactionWithCategories } from '@/types/budget.types';
 
 export default function Page() {
-  const { categories, loading } = useBudget();
+  const { transactions, transactionsLoading, createTransaction, updateTransaction, deleteTransaction } = useBudget();
 
-  // Calculer les statistiques (pour l'instant des données fictives)
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState<TransactionWithCategories | null>(null);
+
+  // Calculer les vraies statistiques du mois en cours
+  const now = new Date();
+  const currentMonthTransactions = transactions.filter((t) => {
+    const transactionDate = new Date(t.date);
+    return transactionDate.getMonth() === now.getMonth() && transactionDate.getFullYear() === now.getFullYear();
+  });
+
   const stats = {
-    totalDepenses: 0,
-    totalRevenus: 0,
+    totalDepenses: currentMonthTransactions.filter((t) => t.type === 'expense').reduce((sum, t) => sum + t.totalAmount, 0),
+    totalRevenus: currentMonthTransactions.filter((t) => t.type === 'income').reduce((sum, t) => sum + t.totalAmount, 0),
     solde: 0,
+  };
+  stats.solde = stats.totalRevenus - stats.totalDepenses;
+
+  const handleCreate = () => {
+    setEditingTransaction(null);
+    setSheetOpen(true);
+  };
+
+  const handleEdit = (transaction: TransactionWithCategories) => {
+    setEditingTransaction(transaction);
+    setSheetOpen(true);
+  };
+
+  const handleSubmit = async (data: TransactionInput) => {
+    if (editingTransaction) {
+      await updateTransaction(editingTransaction.id, data);
+    } else {
+      await createTransaction(data);
+    }
+    setSheetOpen(false);
   };
 
   return (
@@ -23,7 +55,7 @@ export default function Page() {
         <div className='@container/main flex flex-1 flex-col gap-2'>
           <div className='flex flex-col gap-3 py-3 px-3 md:gap-4 md:py-4 md:px-4 lg:gap-6 lg:py-6 lg:px-6'>
             <div className='flex items-center justify-end'>
-              <Button className='w-full sm:w-auto'>
+              <Button onClick={handleCreate} className='w-full sm:w-auto'>
                 <IconPlus className='mr-2 size-4' />
                 Nouvelle transaction
               </Button>
@@ -63,56 +95,27 @@ export default function Page() {
               </Card>
             </div>
 
-            {/* Dépenses par catégorie */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Dépenses par catégorie</CardTitle>
-                <CardDescription>Répartition de vos dépenses ce mois-ci</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {loading ? (
-                  <div className='space-y-2'>
-                    <Skeleton className='h-12' />
-                    <Skeleton className='h-12' />
-                    <Skeleton className='h-12' />
-                  </div>
-                ) : categories.length === 0 ? (
-                  <div className='text-center text-sm text-muted-foreground py-8'>
-                    <p>Aucune catégorie configurée</p>
-                    <p className='mt-2'>Créez vos catégories dans les paramètres</p>
-                  </div>
-                ) : (
-                  <div className='space-y-3'>
-                    {categories.map((category) => (
-                      <div key={category.id} className='flex items-center justify-between'>
-                        <div className='flex items-center gap-3'>
-                          <div className='size-4 rounded-full' style={{ backgroundColor: category.color }} />
-                          <span className='font-medium'>{category.name}</span>
-                        </div>
-                        <div className='text-right'>
-                          <div className='font-semibold'>0.00 €</div>
-                          <div className='text-xs text-muted-foreground'>0%</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
             {/* Dernières transactions */}
             <Card>
               <CardHeader>
-                <CardTitle>Dernières transactions</CardTitle>
+                <CardTitle>Transactions</CardTitle>
                 <CardDescription>Historique de vos dépenses et revenus</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className='text-center text-sm text-muted-foreground py-8'>Aucune transaction enregistrée pour le moment</div>
+                <TransactionList
+                  transactions={transactions}
+                  loading={transactionsLoading}
+                  onEdit={handleEdit}
+                  onDelete={deleteTransaction}
+                />
               </CardContent>
             </Card>
           </div>
         </div>
       </div>
+
+      {/* Sheet formulaire */}
+      <TransactionSheet open={sheetOpen} transaction={editingTransaction} onClose={() => setSheetOpen(false)} onSubmit={handleSubmit} />
     </>
   );
 }
