@@ -84,14 +84,7 @@ export function LivretTresorerieChart({ livrets, selectedYear }: LivretTresoreri
                 <XAxis dataKey='month' tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.slice(0, 3)} />
                 <YAxis tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => `${value.toFixed(0)}€`} />
                 <ChartTooltip content={<ChartTooltipContent formatter={(value) => `${Number(value).toFixed(2)} €`} />} />
-                <Line
-                  type='monotone'
-                  dataKey='tresorerie'
-                  stroke='var(--color-tresorerie)'
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  connectNulls={false}
-                />
+                <Line type='monotone' dataKey='tresorerie' stroke='#A070FB' strokeWidth={2} dot={{ r: 4 }} connectNulls={false} />
               </LineChart>
             </ChartContainer>
           </>
