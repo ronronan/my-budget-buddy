@@ -98,12 +98,17 @@ export const updateSoldesForYear = (livret: Livret, year: number, monthlySoldes:
 };
 
 // Helper pour calculer le solde effectif d'un mois donné
-// Retourne null si le mois n'est pas renseigné (solde = 0)
+// Retourne null si l'année n'a pas de données enregistrées
+// Retourne le solde (même 0) si l'année a des données (car 0 est une valeur valide)
 export const getSoldeEffectif = (livret: Livret, year: number, month: number): number | null => {
-  const monthlySoldes = getSoldesForYear(livret, year);
-  const solde = monthlySoldes[month];
-  // Si le solde est 0, considérer comme non renseigné
-  return solde === 0 ? null : solde;
+  // Si l'année n'a pas de données enregistrées du tout, retourner null
+  if (!livret.yearlySoldes || !livret.yearlySoldes[year]) {
+    return null;
+  }
+
+  // Sinon, retourner la valeur (même si c'est 0, car c'est une valeur valide)
+  const monthlySoldes = livret.yearlySoldes[year];
+  return monthlySoldes[month];
 };
 
 // Noms des mois pour affichage

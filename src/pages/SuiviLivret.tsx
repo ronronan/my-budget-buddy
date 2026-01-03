@@ -28,13 +28,23 @@ export default function SuiviLivret() {
     const numValue = value === '' ? 0 : parseFloat(value);
     const finalValue = isNaN(numValue) ? 0 : Math.round(numValue * 100) / 100; // Limiter à 2 décimales
 
-    setEditingSoldes((prev) => ({
-      ...prev,
-      [livretId]: {
-        ...(prev[livretId] || createEmptyMonthlySoldes()),
-        [month]: finalValue,
-      },
-    }));
+    setEditingSoldes((prev) => {
+      // Si le livret n'est pas déjà en cours d'édition, récupérer ses valeurs actuelles depuis Firestore
+      const currentLivretSoldes =
+        prev[livretId] ||
+        (() => {
+          const livret = livrets.find((l) => l.id === livretId);
+          return livret ? getSoldesForYear(livret, selectedYear) : createEmptyMonthlySoldes();
+        })();
+
+      return {
+        ...prev,
+        [livretId]: {
+          ...currentLivretSoldes,
+          [month]: finalValue,
+        },
+      };
+    });
     setHasChanges(true);
   };
 

@@ -11,6 +11,19 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.9.1] - 2026-01-03
+
+### Corrigé
+
+- **Bug réinitialisation des valeurs dans Suivi Livrets** :
+  - Correction du bug où éditer un solde mensuel réinitialisait tous les autres soldes à 0
+  - La fonction `updateMonthlySolde` récupère maintenant correctement les valeurs existantes depuis Firestore avant de mettre à jour
+
+- **Graphique de trésorerie vide** :
+  - Correction de `getSoldeEffectif` pour accepter 0 comme valeur valide
+  - Le graphique affiche maintenant correctement les données dès qu'une année a des soldes enregistrés
+  - Distinction entre "année sans données" (null) et "solde à 0" (valeur valide)
+
 ## [0.9.0] - 2026-01-01
 
 ### Ajouté
