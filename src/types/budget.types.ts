@@ -18,6 +18,14 @@ export interface Transaction {
   category?: string;
   amount?: number;
 
+  // Métadonnées d'import (pour imports CSV)
+  importMetadata?: {
+    source: 'csv' | 'manual';
+    importDate?: Date;
+    originalDescription?: string; // Libellé brut du CSV
+    deduplicationKey?: string; // Clé pour éviter les doublons
+  };
+
   createdAt: Date;
   updatedAt: Date;
 }

@@ -1,6 +1,7 @@
-import { IconPlus, IconShoppingCart, IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
+import { IconPlus, IconShoppingCart, IconTrendingDown, IconTrendingUp, IconUpload } from '@tabler/icons-react';
 import { useState } from 'react';
 
+import { ImportDialog } from '@/components/import/ImportDialog';
 import { SiteHeader } from '@/components/site-header';
 import { TransactionList } from '@/components/transactions/TransactionList';
 import { TransactionSheet } from '@/components/transactions/TransactionSheet';
@@ -13,6 +14,7 @@ export default function Page() {
   const { transactions, transactionsLoading, createTransaction, updateTransaction, deleteTransaction } = useBudget();
 
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<TransactionWithCategories | null>(null);
 
   // Calculer les vraies statistiques du mois en cours
@@ -54,7 +56,11 @@ export default function Page() {
       <div className='flex flex-1 flex-col'>
         <div className='@container/main flex flex-1 flex-col gap-2'>
           <div className='flex flex-col gap-3 py-3 px-3 md:gap-4 md:py-4 md:px-4 lg:gap-6 lg:py-6 lg:px-6'>
-            <div className='flex items-center justify-end'>
+            <div className='flex items-center justify-end gap-2'>
+              <Button variant='outline' onClick={() => setImportDialogOpen(true)} className='w-full sm:w-auto'>
+                <IconUpload className='mr-2 size-4' />
+                Importer CSV
+              </Button>
               <Button onClick={handleCreate} className='w-full sm:w-auto'>
                 <IconPlus className='mr-2 size-4' />
                 Nouvelle transaction
@@ -116,6 +122,9 @@ export default function Page() {
 
       {/* Sheet formulaire */}
       <TransactionSheet open={sheetOpen} transaction={editingTransaction} onClose={() => setSheetOpen(false)} onSubmit={handleSubmit} />
+
+      {/* Dialog import CSV */}
+      <ImportDialog open={importDialogOpen} onClose={() => setImportDialogOpen(false)} />
     </>
   );
 }

@@ -11,6 +11,31 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.12.0] - 2026-01-04
+
+### Ajouté
+
+- **Import de transactions depuis CSV (Crédit Agricole)** :
+  - Composant `ImportDialog` avec workflow complet (upload → preview → import → rapport)
+  - Service de parsing CSV avec support de l'encodage ISO-8859-1 (caractères accentués)
+  - Détection automatique des doublons (date + montant + libellé)
+  - Catégorie "À classer > Non catégorisé" créée automatiquement pour les imports
+  - Prévisualisation détaillée avec onglets (nouvelles, doublons, erreurs)
+  - Rapport post-import avec statistiques (importées, doublons, erreurs)
+  - Support drag & drop pour l'upload de fichiers
+  - Validation du format CSV et gestion des erreurs de parsing
+  - Import batch optimisé vers Firestore (jusqu'à 500 transactions/batch)
+  - Métadonnées d'import stockées (source, date, libellé original, clé déduplication)
+  - Bouton "Importer CSV" dans la page Suivi Dépense
+  - Composant `Alert` (shadcn/ui) ajouté pour les notifications
+
+- **Dépendance papaparse** : Bibliothèque pour parsing CSV robuste
+
+### Modifié
+
+- Type `Transaction` étendu avec champ `importMetadata` optionnel
+- Catégories par défaut incluent maintenant "À classer" (couleur grise, icône question)
+
 ## [0.11.0] - 2026-01-04
 
 ### Ajouté

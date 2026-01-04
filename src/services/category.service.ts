@@ -13,6 +13,7 @@ const DEFAULT_CATEGORIES = [
   { name: 'Loisirs', color: '#ec4899', icon: 'IconDeviceGamepad2', type: 'expense' as const, order: 3, parentId: null },
   { name: 'Santé', color: '#ef4444', icon: 'IconFirstAidKit', type: 'expense' as const, order: 4, parentId: null },
   { name: 'Revenus', color: '#22c55e', icon: 'IconMoneybag', type: 'income' as const, order: 5, parentId: null },
+  { name: 'À classer', color: '#94a3b8', icon: 'IconQuestionMark', type: 'expense' as const, order: 6, parentId: null },
 ];
 
 export const categoryService = {
