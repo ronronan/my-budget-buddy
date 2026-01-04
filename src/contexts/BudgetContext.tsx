@@ -426,11 +426,28 @@ export function BudgetProvider({ children }: BudgetProviderProps) {
     try {
       setTransactionsError(null);
 
-      // Optimistic update
+      // Optimistic update avec enrichissement local des catégories
       setTransactions((prev) =>
         prev.map((transaction) => {
           if (transaction.id === id) {
-            return { ...transaction, ...data };
+            const updated = { ...transaction, ...data };
+
+            // Si les splits sont modifiés, enrichir les categoriesDetails localement
+            if (data.splits) {
+              const allCategories = [...categories, ...categories.flatMap((c) => c.subcategories)];
+              updated.categoriesDetails = data.splits.map((split) => {
+                const category = allCategories.find((c) => c.id === split.categoryId);
+                return {
+                  categoryId: split.categoryId,
+                  categoryName: category?.name || 'Catégorie supprimée',
+                  categoryColor: category?.color || '#9ca3af',
+                  categoryIcon: category?.icon,
+                  amount: split.amount,
+                };
+              });
+            }
+
+            return updated;
           }
           return transaction;
         }),
@@ -439,9 +456,6 @@ export function BudgetProvider({ children }: BudgetProviderProps) {
       // Mettre à jour dans Firestore
       await transactionService.updateTransaction(id, user.uid, data);
       toast.success('Transaction modifiée');
-
-      // Recharger pour avoir les données enrichies
-      await fetchTransactions();
     } catch (err) {
       console.error('Error updating transaction:', err);
       const message = 'Erreur lors de la modification de la transaction';

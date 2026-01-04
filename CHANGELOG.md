@@ -11,6 +11,25 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [1.0.2] - 2026-01-04
+
+### Amélioré
+
+- **Performance de la modification rapide de catégorie** :
+  - Suppression du rechargement complet des transactions après modification
+  - Enrichissement local des `categoriesDetails` lors de l'optimistic update
+  - Utilisation des catégories déjà chargées en mémoire
+  - Interface plus réactive et fluide sans rechargement visible
+  - Réduction des requêtes Firestore pour meilleure performance
+
+### Technique
+
+- Modification de `BudgetContext.updateTransaction` :
+  - Enrichissement des categoriesDetails directement dans l'optimistic update
+  - Suppression du `fetchTransactions()` après mise à jour réussie
+  - Conservation du rollback en cas d'erreur
+  - Pattern : mise à jour locale pure sans rechargement des données
+
 ## [1.0.1] - 2026-01-04
 
 ### Corrigé
