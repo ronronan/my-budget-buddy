@@ -1,5 +1,7 @@
 import { IconArrowDown, IconArrowUp, IconCalendar, IconDotsVertical, IconEdit, IconFilter, IconTrash } from '@tabler/icons-react';
+import { Loader2 } from 'lucide-react';
 import { createElement, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   AlertDialog,
@@ -33,7 +35,7 @@ interface TransactionListProps {
 }
 
 export function TransactionList({ transactions, loading, onEdit, onDelete, selectedYear, selectedMonth }: TransactionListProps) {
-  const { categories } = useBudget();
+  const { categories, updateTransaction } = useBudget();
   const isMobile = useIsMobile();
 
   const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>('all');
@@ -41,6 +43,7 @@ export function TransactionList({ transactions, loading, onEdit, onDelete, selec
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingTransaction, setDeletingTransaction] = useState<TransactionWithCategories | null>(null);
+  const [updatingTransactionId, setUpdatingTransactionId] = useState<string | null>(null);
 
   const ITEMS_PER_PAGE = 10;
 
@@ -92,6 +95,23 @@ export function TransactionList({ transactions, loading, onEdit, onDelete, selec
       onDelete(deletingTransaction.id);
       setDeleteDialogOpen(false);
       setDeletingTransaction(null);
+    }
+  };
+
+  const handleCategoryChange = async (transactionId: string, newCategoryId: string, currentAmount: number) => {
+    try {
+      setUpdatingTransactionId(transactionId);
+
+      await updateTransaction(transactionId, {
+        splits: [{ categoryId: newCategoryId, amount: currentAmount }],
+      });
+
+      toast.success('Catégorie modifiée avec succès');
+    } catch (error) {
+      toast.error('Erreur lors de la modification de la catégorie');
+      console.error(error);
+    } finally {
+      setUpdatingTransactionId(null);
     }
   };
 
@@ -210,24 +230,78 @@ export function TransactionList({ transactions, loading, onEdit, onDelete, selec
 
                   {/* Catégories */}
                   <div className='flex flex-wrap gap-1.5'>
-                    {transaction.categoriesDetails.map((cat) => (
-                      <div
-                        key={cat.categoryId}
-                        className='flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium'
-                        style={{
-                          backgroundColor: cat.categoryColor + '20',
-                          color: cat.categoryColor,
-                        }}
+                    {transaction.splits.length === 1 ? (
+                      // Transaction simple : Select modifiable
+                      <Select
+                        value={transaction.splits[0].categoryId}
+                        onValueChange={(newCategoryId) => handleCategoryChange(transaction.id, newCategoryId, transaction.totalAmount)}
+                        disabled={updatingTransactionId === transaction.id}
                       >
-                        {cat.categoryIcon && (
-                          <span className='flex size-3.5 items-center justify-center'>
-                            {createElement(getIconComponent(cat.categoryIcon), { className: 'size-3.5' })}
-                          </span>
-                        )}
-                        <span>{cat.categoryName}</span>
-                        {transaction.splits.length > 1 && <span>• {cat.amount.toFixed(2)} €</span>}
-                      </div>
-                    ))}
+                        <SelectTrigger
+                          className='h-auto min-h-[28px] w-auto border-0 px-2 py-1'
+                          style={{
+                            backgroundColor: transaction.categoriesDetails[0].categoryColor + '20',
+                            color: transaction.categoriesDetails[0].categoryColor,
+                          }}
+                        >
+                          <SelectValue>
+                            <div className='flex items-center gap-1.5 text-xs font-medium'>
+                              {transaction.categoriesDetails[0].categoryIcon && (
+                                <span className='flex size-3.5 items-center justify-center'>
+                                  {createElement(getIconComponent(transaction.categoriesDetails[0].categoryIcon), {
+                                    className: 'size-3.5',
+                                  })}
+                                </span>
+                              )}
+                              <span>{transaction.categoriesDetails[0].categoryName}</span>
+                              {updatingTransactionId === transaction.id && <Loader2 className='ml-1 size-3 animate-spin' />}
+                            </div>
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map((parent) => (
+                            <div key={parent.id}>
+                              <div className='px-2 py-1.5 text-xs font-semibold text-muted-foreground'>{parent.name}</div>
+                              {parent.subcategories.map((sub) => (
+                                <SelectItem key={sub.id} value={sub.id}>
+                                  <div className='flex items-center gap-2'>
+                                    <div className='size-3 rounded-full' style={{ backgroundColor: sub.color }} />
+                                    {sub.icon && (
+                                      <span className='flex size-3.5 items-center justify-center'>
+                                        {createElement(getIconComponent(sub.icon), { className: 'size-3.5' })}
+                                      </span>
+                                    )}
+                                    {sub.name}
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </div>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      // Transaction split : Badges non modifiables
+                      <>
+                        {transaction.categoriesDetails.map((cat) => (
+                          <div
+                            key={cat.categoryId}
+                            className='flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium'
+                            style={{
+                              backgroundColor: cat.categoryColor + '20',
+                              color: cat.categoryColor,
+                            }}
+                          >
+                            {cat.categoryIcon && (
+                              <span className='flex size-3.5 items-center justify-center'>
+                                {createElement(getIconComponent(cat.categoryIcon), { className: 'size-3.5' })}
+                              </span>
+                            )}
+                            <span>{cat.categoryName}</span>
+                            <span>• {cat.amount.toFixed(2)} €</span>
+                          </div>
+                        ))}
+                      </>
+                    )}
                   </div>
                 </div>
 

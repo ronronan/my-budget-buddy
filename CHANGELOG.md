@@ -11,6 +11,50 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [1.0.0] - 2026-01-04
+
+### 🎉 Première version stable
+
+Cette version marque la stabilité de l'application avec toutes les fonctionnalités essentielles implémentées et testées.
+
+### Ajouté
+
+- **Modification rapide de catégorie** :
+  - Select de catégorie interactif directement dans la liste de transactions
+  - Fonctionnalité réservée aux transactions simples (1 catégorie)
+  - Optimistic updates pour feedback immédiat
+  - Indicateur de chargement (Loader2) pendant la mise à jour
+  - Notifications toast de succès/erreur
+  - Interface responsive et accessible
+  - Transactions split conservent l'affichage badges non modifiable
+  - Validation automatique via transactionService
+
+### Technique
+
+- Réutilisation du système optimistic update existant (BudgetContext)
+- Validation par transactionService (pas de nouvelles validations nécessaires)
+- Performance optimale : pas de requêtes supplémentaires
+- Pattern cohérent avec le reste de l'application
+- Handler `handleCategoryChange` avec gestion d'erreur complète
+- État local `updatingTransactionId` pour tracking des mises à jour
+
+### Notes
+
+**Version 1.0.0** représente une application production-ready avec gestion complète des transactions et catégories. L'ajout de la modification rapide de catégorie améliore significativement l'UX pour le cas d'usage principal : catégoriser rapidement ses dépenses quotidiennes.
+
+**Fonctionnalités principales** :
+- ✅ Authentification Firebase
+- ✅ Gestion des catégories hiérarchiques
+- ✅ CRUD transactions avec support splits
+- ✅ Import CSV (Crédit Agricole)
+- ✅ Navigation mois/année avec pagination
+- ✅ **Modification rapide de catégorie** (nouveau !)
+- ✅ Dashboard avec visualisations
+- ✅ Budget annuel et suivi livrets
+- ✅ Interface responsive et accessible
+
+---
+
 ## [0.13.0] - 2026-01-04
 
 ### Ajouté
