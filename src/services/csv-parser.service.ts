@@ -5,9 +5,9 @@ import { type Transaction } from '@/types/budget.types';
 // Types pour le parsing CSV
 interface RawCSVRow {
   Date: string;
-  Libellé: string;
-  'Débit euros': string;
-  'Crédit euros': string;
+  Libelle: string;
+  'Debit euros': string;
+  'Credit euros': string;
 }
 
 export interface ParsedTransaction {
@@ -54,12 +54,12 @@ export const csvParserService = {
       const preview = await this.readFirstLines(file, 15);
 
       // 3. Vérifier que la ligne d'en-tête contient les colonnes attendues
-      const hasHeader = preview.some((line) => line.includes('Date;Libellé;Débit euros;Crédit euros'));
+      const hasHeader = preview.some((line) => line.includes('Date;Libelle;Debit euros;Credit euros'));
 
       if (!hasHeader) {
         return {
           valid: false,
-          error: 'Format non reconnu. Attendu : fichier CSV Crédit Agricole avec colonnes Date, Libellé, Débit euros, Crédit euros',
+          error: 'Format non reconnu. Attendu : fichier CSV Crédit Agricole avec colonnes Date, Libelle, Debit euros, Credit euros',
         };
       }
 
@@ -134,7 +134,7 @@ export const csvParserService = {
    */
   parseRow(row: RawCSVRow): ParsedTransaction | null {
     // 1. Vérifier que les champs requis sont présents
-    if (!row.Date || (!row['Débit euros'] && !row['Crédit euros'])) {
+    if (!row.Date || (!row['Debit euros'] && !row['Credit euros'])) {
       return null; // Ligne vide ou incomplète, ignorer silencieusement
     }
 
@@ -159,14 +159,14 @@ export const csvParserService = {
     }
 
     // 3. Nettoyer et normaliser le libellé
-    const description = this.cleanDescription(row.Libellé || '');
+    const description = this.cleanDescription(row.Libelle || '');
     if (!description) {
-      throw new Error('Libellé vide');
+      throw new Error('Libelle vide');
     }
 
     // 4. Parser le montant (virgule → point, supprimer espaces)
-    const debitStr = row['Débit euros']?.trim() || '';
-    const creditStr = row['Crédit euros']?.trim() || '';
+    const debitStr = row['Debit euros']?.trim() || '';
+    const creditStr = row['Credit euros']?.trim() || '';
 
     let amount = 0;
     let type: 'income' | 'expense' = 'expense';
@@ -192,7 +192,7 @@ export const csvParserService = {
       description,
       amount,
       type,
-      originalDescription: row.Libellé,
+      originalDescription: row.Libelle,
       deduplicationKey,
     };
   },
@@ -307,7 +307,7 @@ export const csvParserService = {
    * Ignore les lignes d'en-tête du CSV (avant les données de transactions)
    */
   skipHeaderRows(data: RawCSVRow[]): RawCSVRow[] {
-    // Les données commencent après la ligne d'en-tête "Date;Libellé;Débit euros;Crédit euros"
+    // Les données commencent après la ligne d'en-tête "Date;Libelle;Debit euros;Credit euros"
     // papaparse a déjà utilisé cette ligne comme header, donc on peut retourner toutes les données
     // Mais on doit ignorer les lignes qui n'ont pas les bonnes colonnes (lignes d'en-tête du fichier)
 
