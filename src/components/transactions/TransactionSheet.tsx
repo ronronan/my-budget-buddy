@@ -412,7 +412,6 @@ export function TransactionSheet({ open, transaction, onClose, onSubmit }: Trans
                           <Input
                             type='number'
                             step='0.01'
-                            min='0'
                             value={split.amount}
                             onChange={(e) => handleSplitChange(index, 'amount', e.target.value)}
                             placeholder='Montant (€)'

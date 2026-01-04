@@ -11,6 +11,22 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [1.0.3] - 2026-01-04
+
+### Ajouté
+
+- **Support des montants négatifs dans les splits de transactions** :
+  - Possibilité de saisir des montants négatifs lors de la division d'une transaction
+  - Cas d'usage : ajustements, corrections, remboursements partiels
+  - Exemple : Transaction 100€ → Split A: 120€, Split B: -20€ = Total 100€
+  - La somme totale des splits doit toujours égaler le montant de la transaction
+
+### Modifié
+
+- Retrait de la validation `.positive()` sur les montants de split (transaction.schema.ts)
+- Retrait de l'attribut `min='0'` sur l'input de montant de split (TransactionSheet.tsx)
+- Conservation de la validation d'égalité : somme des splits = montant total
+
 ## [1.0.2] - 2026-01-04
 
 ### Amélioré

@@ -3,7 +3,7 @@ import { z } from 'zod';
 // Schéma pour un split individuel
 export const transactionSplitSchema = z.object({
   categoryId: z.string().min(1, 'La catégorie est requise'),
-  amount: z.number().positive('Le montant doit être positif'),
+  amount: z.number({ message: 'Le montant est requis' }),
 });
 
 // Schéma pour mode SIMPLE (1 catégorie)
