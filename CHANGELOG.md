@@ -11,6 +11,22 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [1.0.1] - 2026-01-04
+
+### Corrigé
+
+- **Erreur Firestore lors de la modification rapide de catégorie** :
+  - Correction du bug "Unsupported field value: undefined" lors de la mise à jour de transaction
+  - Le service `updateTransaction` filtre maintenant tous les champs undefined avant l'envoi à Firestore
+  - Gestion correcte des mises à jour partielles (seuls les champs fournis sont modifiés)
+  - Impact : La modification rapide de catégorie fonctionne désormais sans erreur
+
+### Technique
+
+- Modification de `transaction.service.ts` : suppression des champs undefined dans `updateTransaction`
+- Pattern appliqué : nettoyage de l'objet updateData avant persistence Firestore
+- Firestore n'accepte pas les valeurs undefined, seuls les champs définis sont envoyés
+
 ## [1.0.0] - 2026-01-04
 
 ### 🎉 Première version stable
@@ -43,6 +59,7 @@ Cette version marque la stabilité de l'application avec toutes les fonctionnali
 **Version 1.0.0** représente une application production-ready avec gestion complète des transactions et catégories. L'ajout de la modification rapide de catégorie améliore significativement l'UX pour le cas d'usage principal : catégoriser rapidement ses dépenses quotidiennes.
 
 **Fonctionnalités principales** :
+
 - ✅ Authentification Firebase
 - ✅ Gestion des catégories hiérarchiques
 - ✅ CRUD transactions avec support splits

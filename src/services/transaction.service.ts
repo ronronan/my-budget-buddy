@@ -141,10 +141,22 @@ export const transactionService = {
       }
     }
 
-    const updateData: Record<string, unknown> = {
-      ...data,
-      date: data.date ? Timestamp.fromDate(data.date) : undefined,
-    };
+    const updateData: Record<string, unknown> = { ...data };
+
+    // Convertir la date en Timestamp si elle est fournie
+    if (data.date) {
+      updateData.date = Timestamp.fromDate(data.date);
+    } else {
+      // Supprimer le champ date s'il n'est pas fourni
+      delete updateData.date;
+    }
+
+    // Supprimer tous les champs undefined (Firestore ne les accepte pas)
+    Object.keys(updateData).forEach((key) => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
+    });
 
     await firestoreService.update(COLLECTION_NAME, transactionId, updateData);
   },
