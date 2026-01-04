@@ -7,12 +7,12 @@ import { type Category, type CategoryInput, type CategoryWithSubcategories } fro
 const COLLECTION_NAME = 'categories';
 
 const DEFAULT_CATEGORIES = [
-  { name: 'Alimentation', color: '#10b981', icon: 'IconShoppingCart', order: 0, parentId: null },
-  { name: 'Transport', color: '#3b82f6', icon: 'IconCar', order: 1, parentId: null },
-  { name: 'Logement', color: '#f59e0b', icon: 'IconHome', order: 2, parentId: null },
-  { name: 'Loisirs', color: '#ec4899', icon: 'IconDeviceGamepad2', order: 3, parentId: null },
-  { name: 'Santé', color: '#ef4444', icon: 'IconFirstAidKit', order: 4, parentId: null },
-  { name: 'Revenus', color: '#22c55e', icon: 'IconMoneybag', order: 5, parentId: null },
+  { name: 'Alimentation', color: '#10b981', icon: 'IconShoppingCart', type: 'expense' as const, order: 0, parentId: null },
+  { name: 'Transport', color: '#3b82f6', icon: 'IconCar', type: 'expense' as const, order: 1, parentId: null },
+  { name: 'Logement', color: '#f59e0b', icon: 'IconHome', type: 'expense' as const, order: 2, parentId: null },
+  { name: 'Loisirs', color: '#ec4899', icon: 'IconDeviceGamepad2', type: 'expense' as const, order: 3, parentId: null },
+  { name: 'Santé', color: '#ef4444', icon: 'IconFirstAidKit', type: 'expense' as const, order: 4, parentId: null },
+  { name: 'Revenus', color: '#22c55e', icon: 'IconMoneybag', type: 'income' as const, order: 5, parentId: null },
 ];
 
 export const categoryService = {
@@ -73,6 +73,7 @@ export const categoryService = {
       name: data.name,
       color: data.color,
       icon: data.icon || null,
+      type: data.type || 'expense', // Défaut: expense pour compatibilité rétroactive
       budget: data.budget || null, // @deprecated - pour compatibilité rétroactive
       monthlyBudgets: data.monthlyBudgets || null,
       parentId: data.parentId || null,

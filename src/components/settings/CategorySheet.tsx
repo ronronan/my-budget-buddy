@@ -24,6 +24,7 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
     name: '',
     color: '#3b82f6',
     icon: 'IconShoppingCart',
+    type: 'expense',
     parentId: undefined,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof CategoryFormData, string>>>({});
@@ -41,15 +42,17 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
           name: category.name,
           color: category.color,
           icon: category.icon || 'IconShoppingCart',
+          type: category.type || 'expense',
           parentId: category.parentId || undefined,
         });
       } else {
         // Mode création
-        // Si c'est une sous-catégorie, pré-sélectionner l'icône et la couleur du parent
+        // Si c'est une sous-catégorie, pré-sélectionner l'icône, la couleur et le type du parent
         setFormData({
           name: '',
           color: parentCategory?.color || '#3b82f6',
           icon: parentCategory?.icon || 'IconShoppingCart',
+          type: parentCategory?.type || 'expense',
           parentId: parentCategory?.id || undefined,
         });
       }
@@ -79,6 +82,7 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
       const submitData: CategoryInput = {
         ...result.data,
         icon: result.data.icon || undefined,
+        type: result.data.type,
         parentId: result.data.parentId || undefined,
       };
       await onSubmit(submitData);
@@ -122,6 +126,23 @@ export function CategorySheet({ open, category, parentCategory, categories = [],
               className='h-11'
             />
             {errors.name && <p className='text-sm text-destructive'>{errors.name}</p>}
+          </div>
+
+          {/* Type */}
+          <div className='space-y-2.5'>
+            <Label htmlFor='type' className='text-sm font-medium'>
+              Type <span className='text-destructive'>*</span>
+            </Label>
+            <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value as 'income' | 'expense' })}>
+              <SelectTrigger id='type' disabled={isSubmitting} className='h-11'>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='expense'>Dépense</SelectItem>
+                <SelectItem value='income'>Revenu</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.type && <p className='text-sm text-destructive'>{errors.type}</p>}
           </div>
 
           {/* Icône */}

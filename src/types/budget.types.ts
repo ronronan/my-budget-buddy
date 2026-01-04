@@ -187,6 +187,7 @@ export interface Category {
   name: string;
   color: string;
   icon?: string;
+  type?: 'income' | 'expense'; // Type de catégorie (revenu ou dépense) - optionnel pour rétrocompatibilité
   budget?: number; // @deprecated - utilisé uniquement pour compatibilité rétroactive
   monthlyBudgets?: MonthlyBudget; // @deprecated - Budgets mensuels pour l'année courante (migration vers yearlyBudgets)
   yearlyBudgets?: YearlyBudgets; // Budgets mensuels par année
@@ -204,6 +205,7 @@ export interface CategoryInput {
   name: string;
   color: string;
   icon?: string;
+  type?: 'income' | 'expense'; // Type de catégorie (revenu ou dépense)
   budget?: number; // @deprecated
   monthlyBudgets?: MonthlyBudget; // @deprecated
   yearlyBudgets?: YearlyBudgets;
@@ -232,3 +234,8 @@ export interface LivretInput {
   soldeDepart: number;
   yearlySoldes?: YearlySoldes; // Soldes mensuels par année
 }
+
+// Helper pour obtenir le type d'une catégorie avec fallback
+export const getCategoryType = (category: Category): 'income' | 'expense' => {
+  return category.type || 'expense'; // Défaut: expense pour compatibilité rétroactive
+};

@@ -1,13 +1,34 @@
-import { IconCash, IconChartBar, IconSettings, IconShoppingCart } from '@tabler/icons-react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
+import { ExpensesByCategoryChart } from '@/components/dashboard/ExpensesByCategoryChart';
+import { IncomeVsExpensesSummary } from '@/components/dashboard/IncomeVsExpensesSummary';
+import { SavingsEvolutionChart } from '@/components/dashboard/SavingsEvolutionChart';
 import { SiteHeader } from '@/components/site-header';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useBudget } from '@/hooks/useBudget';
 
 export default function Page() {
-  const { livrets, categories } = useBudget();
+  const { transactions, categories, transactionsLoading } = useBudget();
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+
+  // Générer options d'années (currentYear - 2 à currentYear + 1)
+  const yearOptions = Array.from({ length: 4 }, (_, i) => currentYear - 2 + i);
+
+  // Filtrer transactions par année sélectionnée (React Compiler optimise automatiquement)
+  const yearTransactions = transactions.filter((t) => {
+    const transactionYear = new Date(t.date).getFullYear();
+    return transactionYear === selectedYear;
+  });
+
+  // Calculer statistiques annuelles (React Compiler optimise automatiquement)
+  const totalExpenses = yearTransactions.filter((t) => t.type === 'expense').reduce((sum, t) => sum + t.totalAmount, 0);
+  const totalIncome = yearTransactions.filter((t) => t.type === 'income').reduce((sum, t) => sum + t.totalAmount, 0);
+  const yearStats = {
+    totalExpenses,
+    totalIncome,
+    balance: totalIncome - totalExpenses,
+  };
 
   return (
     <>
@@ -15,90 +36,45 @@ export default function Page() {
       <div className='flex flex-1 flex-col'>
         <div className='@container/main flex flex-1 flex-col gap-2'>
           <div className='flex flex-col gap-3 py-3 px-3 md:gap-4 md:py-4 md:px-4 lg:gap-6 lg:py-6 lg:px-6'>
-            {/* Cartes de résumé */}
-            <div className='grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>Livrets configurés</CardTitle>
-                  <IconCash className='size-4 text-muted-foreground' />
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>{livrets.length}</div>
-                  <p className='text-xs text-muted-foreground'>
-                    {livrets.length === 0
-                      ? 'Aucun livret'
-                      : `Épargne totale: ${livrets.reduce((acc, l) => acc + l.soldeDepart, 0).toFixed(2)} €`}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>Catégories</CardTitle>
-                  <IconChartBar className='size-4 text-muted-foreground' />
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>{categories.length}</div>
-                  <p className='text-xs text-muted-foreground'>{categories.length === 0 ? 'Aucune catégorie' : 'Catégories configurées'}</p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                  <CardTitle className='text-sm font-medium'>Transactions</CardTitle>
-                  <IconShoppingCart className='size-4 text-muted-foreground' />
-                </CardHeader>
-                <CardContent>
-                  <div className='text-2xl font-bold'>0</div>
-                  <p className='text-xs text-muted-foreground'>Ce mois-ci</p>
-                </CardContent>
-              </Card>
+            {/* En-tête avec sélecteur d'année */}
+            <div className='flex items-center justify-between'>
+              <div>
+                <h1 className='text-2xl font-bold tracking-tight'>Tableau de bord</h1>
+                <p className='text-sm text-muted-foreground'>Vue d'ensemble de votre budget pour {selectedYear}</p>
+              </div>
+              <Select value={selectedYear.toString()} onValueChange={(value) => setSelectedYear(parseInt(value))}>
+                <SelectTrigger className='w-32'>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {yearOptions.map((year) => (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            {/* Actions rapides */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Actions rapides</CardTitle>
-                <CardDescription>Accédez rapidement aux fonctionnalités principales</CardDescription>
-              </CardHeader>
-              <CardContent className='grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'>
-                <Link to='/suivi-livret'>
-                  <Button variant='outline' className='w-full justify-start'>
-                    <IconCash className='mr-2 size-4' />
-                    Gérer mes livrets
-                  </Button>
-                </Link>
-                <Link to='/suivi-depense'>
-                  <Button variant='outline' className='w-full justify-start'>
-                    <IconShoppingCart className='mr-2 size-4' />
-                    Suivre mes dépenses
-                  </Button>
-                </Link>
-                <Link to='/settings'>
-                  <Button variant='outline' className='w-full justify-start'>
-                    <IconSettings className='mr-2 size-4' />
-                    Paramètres
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+            {transactionsLoading ? (
+              <div className='flex items-center justify-center py-12'>
+                <p className='text-sm text-muted-foreground'>Chargement des données...</p>
+              </div>
+            ) : (
+              <>
+                {/* 1. Synthèse Revenus vs Dépenses */}
+                <IncomeVsExpensesSummary
+                  totalIncome={yearStats.totalIncome}
+                  totalExpenses={yearStats.totalExpenses}
+                  balance={yearStats.balance}
+                />
 
-            {/* Message de bienvenue si aucune donnée */}
-            {livrets.length === 0 && categories.length === 0 && (
-              <Card>
-                <CardContent className='flex flex-col items-center justify-center py-12'>
-                  <h3 className='mb-2 text-lg font-semibold'>Bienvenue sur My Budget Buddy !</h3>
-                  <p className='mb-4 text-center text-sm text-muted-foreground'>
-                    Commencez par configurer vos catégories et vos livrets dans les paramètres
-                  </p>
-                  <Link to='/settings'>
-                    <Button>
-                      <IconSettings className='mr-2 size-4' />
-                      Aller aux paramètres
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
+                {/* 2. Dépenses par catégorie (sur l'année) */}
+                <ExpensesByCategoryChart transactions={yearTransactions} categories={categories} selectedYear={selectedYear} />
+
+                {/* 3. Évolution de l'épargne (mensuelle) */}
+                <SavingsEvolutionChart transactions={yearTransactions} selectedYear={selectedYear} />
+              </>
             )}
           </div>
         </div>

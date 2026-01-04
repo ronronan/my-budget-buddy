@@ -11,6 +11,61 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.11.0] - 2026-01-04
+
+### Ajouté
+
+- **Typage des catégories** :
+  - Nouveau champ `type` (revenu/dépense) pour les catégories
+  - Sélecteur de type dans le formulaire de catégorie
+  - Héritage automatique du type du parent pour les sous-catégories
+  - Migration transparente : catégories existantes considérées comme "dépense" par défaut
+  - Helper `getCategoryType()` pour obtenir le type avec fallback
+  - Validation Zod pour le champ type
+  - Catégories par défaut incluent maintenant le type (5 dépenses + 1 revenu)
+
+- **Dashboard refait avec 3 visualisations principales** :
+  - **Synthèse Revenus vs Dépenses** :
+    - 3 cards affichant revenus totaux, dépenses totales et solde
+    - Pourcentages et barres de progression colorées
+    - Codes couleur : vert pour revenus/positif, rouge pour dépenses/négatif
+  - **Dépenses par catégorie** :
+    - Graphique en barres (BarChart) des dépenses annuelles
+    - Agrégation par catégorie parent
+    - Tri par montant décroissant
+    - Couleurs personnalisées par catégorie
+  - **Évolution de l'épargne** :
+    - Graphique linéaire (LineChart) de l'épargne mensuelle
+    - Calcul : Revenus - Dépenses par mois
+    - Ligne de référence à 0 pour visualiser excédent/déficit
+    - Stats : Total annuel, moyenne mensuelle, meilleur mois
+
+- **Sélecteur d'année pour le dashboard** :
+  - Filtrage des données par année sélectionnée
+  - Année en cours par défaut
+  - Options : 4 années (année-2 à année+1)
+  - Recalcul instantané des graphiques au changement d'année
+
+- **Nouveaux composants** :
+  - `IncomeVsExpensesSummary` : Cartes de synthèse avec montants et pourcentages
+  - `ExpensesByCategoryChart` : Graphique en barres des dépenses par catégorie
+  - `SavingsEvolutionChart` : Graphique linéaire de l'évolution de l'épargne
+
+### Modifié
+
+- Page `Home` complètement refaite en tableau de bord avec visualisations
+- Formulaire `CategorySheet` enrichi avec sélecteur de type
+- Service `category.service` mis à jour pour gérer le champ type
+- Types `Category` et `CategoryInput` avec nouveau champ optionnel `type`
+
+### Technique
+
+- Optimisation React 19 : suppression des useMemo manuels (React Compiler optimise automatiquement)
+- Pattern de référence : Recharts pour graphiques (LineChart, BarChart)
+- Gestion des états vides (aucune donnée pour l'année)
+- Responsive design pour toutes les visualisations
+- Format monétaire uniforme : 2 décimales + symbole €
+
 ## [0.10.0] - 2026-01-03
 
 ### Ajouté
