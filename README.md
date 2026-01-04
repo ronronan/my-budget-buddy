@@ -40,7 +40,7 @@ npm run format      # Formater le code
 
 ## État du Projet
 
-Version actuelle: **0.2.0** (en développement)
+Version actuelle: **1.0.4**
 
 Le projet dispose d'une base solide avec React, TypeScript et les outils de développement configurés. La prochaine étape consiste à définir l'architecture de données et à implémenter les fonctionnalités principales.
 

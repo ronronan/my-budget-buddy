@@ -11,6 +11,22 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [1.0.4] - 2026-01-04
+
+### Corrigé
+
+- **Décalage de date lors de l'édition de transaction** :
+  - Correction du bug où la date affichée dans le formulaire était décalée de 1 jour
+  - Cause : `toISOString()` convertissait en UTC, créant un décalage avec l'heure locale
+  - Solution : Création de la fonction `formatDateForInput()` qui utilise l'heure locale
+  - La date affichée correspond maintenant exactement à la date stockée
+
+### Technique
+
+- Ajout de la fonction helper `formatDateForInput()` dans TransactionSheet.tsx
+- Utilisation de `getFullYear()`, `getMonth()`, `getDate()` au lieu de `toISOString()`
+- Format YYYY-MM-DD sans conversion UTC pour compatibilité avec input type="date"
+
 ## [1.0.3] - 2026-01-04
 
 ### Ajouté

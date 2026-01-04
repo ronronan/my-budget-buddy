@@ -32,6 +32,14 @@ interface FormData {
   splits: Array<{ categoryId: string; amount: string }>;
 }
 
+// Helper pour formater une date en YYYY-MM-DD sans conversion UTC
+const formatDateForInput = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export function TransactionSheet({ open, transaction, onClose, onSubmit }: TransactionSheetProps) {
   const { categories } = useBudget();
 
@@ -39,7 +47,7 @@ export function TransactionSheet({ open, transaction, onClose, onSubmit }: Trans
   const [formData, setFormData] = useState<FormData>({
     totalAmount: '',
     description: '',
-    date: new Date().toISOString().split('T')[0],
+    date: formatDateForInput(new Date()),
     type: 'expense',
     categoryId: '',
     splits: [],
@@ -62,7 +70,7 @@ export function TransactionSheet({ open, transaction, onClose, onSubmit }: Trans
         setFormData({
           totalAmount: transaction.totalAmount.toString(),
           description: transaction.description,
-          date: transaction.date.toISOString().split('T')[0],
+          date: formatDateForInput(new Date(transaction.date)),
           type: transaction.type,
           categoryId: isSplit ? '' : transaction.splits[0]?.categoryId || '',
           splits: isSplit
@@ -78,7 +86,7 @@ export function TransactionSheet({ open, transaction, onClose, onSubmit }: Trans
         setFormData({
           totalAmount: '',
           description: '',
-          date: new Date().toISOString().split('T')[0],
+          date: formatDateForInput(new Date()),
           type: 'expense',
           categoryId: '',
           splits: [],
