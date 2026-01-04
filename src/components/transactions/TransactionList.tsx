@@ -1,5 +1,5 @@
 import { IconArrowDown, IconArrowUp, IconCalendar, IconDotsVertical, IconEdit, IconFilter, IconTrash } from '@tabler/icons-react';
-import { createElement, useState } from 'react';
+import { createElement, useMemo, useState } from 'react';
 
 import {
   AlertDialog,
@@ -14,8 +14,10 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Pagination } from '@/components/ui/pagination';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useBudget } from '@/hooks/useBudget';
 import { getIconComponent } from '@/lib/iconMap';
 import { cn } from '@/lib/utils';
@@ -26,41 +28,59 @@ interface TransactionListProps {
   loading: boolean;
   onEdit: (transaction: TransactionWithCategories) => void;
   onDelete: (id: string) => void;
+  selectedYear: number;
+  selectedMonth: number;
 }
 
-export function TransactionList({ transactions, loading, onEdit, onDelete }: TransactionListProps) {
+export function TransactionList({ transactions, loading, onEdit, onDelete, selectedYear, selectedMonth }: TransactionListProps) {
   const { categories } = useBudget();
+  const isMobile = useIsMobile();
 
   const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [periodFilter, setPeriodFilter] = useState<'month' | 'year' | 'all'>('month');
+  const [currentPage, setCurrentPage] = useState(1);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deletingTransaction, setDeletingTransaction] = useState<TransactionWithCategories | null>(null);
 
-  // Filtrage des transactions
-  const filtered = transactions.filter((transaction) => {
-    // Filtre par type
-    if (typeFilter !== 'all' && transaction.type !== typeFilter) return false;
+  const ITEMS_PER_PAGE = 10;
 
-    // Filtre par catégorie
-    if (categoryFilter !== 'all' && !transaction.splits.some((s) => s.categoryId === categoryFilter)) return false;
+  // Filtrage des transactions avec memoization
+  const filtered = useMemo(() => {
+    return transactions
+      .filter((transaction) => {
+        const date = new Date(transaction.date);
 
-    // Filtre par période
-    const now = new Date();
-    const transactionDate = new Date(transaction.date);
+        // Filtre mois/année (obligatoire)
+        if (date.getMonth() + 1 !== selectedMonth || date.getFullYear() !== selectedYear) {
+          return false;
+        }
 
-    if (periodFilter === 'month') {
-      if (transactionDate.getMonth() !== now.getMonth() || transactionDate.getFullYear() !== now.getFullYear()) {
-        return false;
-      }
-    } else if (periodFilter === 'year') {
-      if (transactionDate.getFullYear() !== now.getFullYear()) {
-        return false;
-      }
-    }
+        // Filtre par type (optionnel)
+        if (typeFilter !== 'all' && transaction.type !== typeFilter) return false;
 
-    return true;
-  });
+        // Filtre par catégorie (optionnel)
+        if (categoryFilter !== 'all' && !transaction.splits.some((s) => s.categoryId === categoryFilter)) return false;
+
+        return true;
+      })
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [transactions, selectedYear, selectedMonth, typeFilter, categoryFilter]);
+
+  // Pagination
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+
+  // Calculer la page effective à afficher (reset à 1 si dépassement)
+  const effectivePage = currentPage > totalPages && totalPages > 0 ? 1 : currentPage;
+
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (effectivePage - 1) * ITEMS_PER_PAGE;
+    return filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filtered, effectivePage]);
+
+  // Handler pour changement de page qui gère le reset si nécessaire
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   const handleDeleteClick = (transaction: TransactionWithCategories) => {
     setDeletingTransaction(transaction);
@@ -138,18 +158,6 @@ export function TransactionList({ transactions, loading, onEdit, onDelete }: Tra
           </SelectContent>
         </Select>
 
-        {/* Filtre période */}
-        <Select value={periodFilter} onValueChange={(value: 'month' | 'year' | 'all') => setPeriodFilter(value)}>
-          <SelectTrigger className='h-9 w-[140px]'>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='month'>Ce mois</SelectItem>
-            <SelectItem value='year'>Cette année</SelectItem>
-            <SelectItem value='all'>Tout</SelectItem>
-          </SelectContent>
-        </Select>
-
         {/* Nombre de résultats */}
         <span className='ml-auto text-sm text-muted-foreground'>
           {filtered.length} transaction{filtered.length > 1 ? 's' : ''}
@@ -168,93 +176,100 @@ export function TransactionList({ transactions, loading, onEdit, onDelete }: Tra
           </p>
         </div>
       ) : (
-        <div className='space-y-2'>
-          {filtered.map((transaction) => (
-            <div key={transaction.id} className='flex items-center gap-3 rounded-lg border bg-card p-3 transition-colors hover:bg-accent'>
-              {/* Icône type */}
-              <div
-                className={cn(
-                  'flex size-10 shrink-0 items-center justify-center rounded-full',
-                  transaction.type === 'income' ? 'bg-green-100 dark:bg-green-950' : 'bg-red-100 dark:bg-red-950',
-                )}
-              >
-                {transaction.type === 'income' ? (
-                  <IconArrowUp className='size-5 text-green-600 dark:text-green-400' />
-                ) : (
-                  <IconArrowDown className='size-5 text-red-600 dark:text-red-400' />
-                )}
-              </div>
-
-              {/* Contenu */}
-              <div className='min-w-0 flex-1'>
-                <div className='mb-1 flex items-center gap-2'>
-                  <p className='font-medium'>{transaction.description}</p>
-                  <Badge variant={transaction.type === 'income' ? 'default' : 'secondary'} className='shrink-0'>
-                    {transaction.type === 'income' ? 'Revenu' : 'Dépense'}
-                  </Badge>
-                </div>
-
-                <div className='mb-2 flex items-center gap-2 text-sm text-muted-foreground'>
-                  <IconCalendar className='size-3.5' />
-                  <span>{formatDate(transaction.date)}</span>
-                </div>
-
-                {/* Catégories */}
-                <div className='flex flex-wrap gap-1.5'>
-                  {transaction.categoriesDetails.map((cat) => (
-                    <div
-                      key={cat.categoryId}
-                      className='flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium'
-                      style={{
-                        backgroundColor: cat.categoryColor + '20',
-                        color: cat.categoryColor,
-                      }}
-                    >
-                      {cat.categoryIcon && (
-                        <span className='flex size-3.5 items-center justify-center'>
-                          {createElement(getIconComponent(cat.categoryIcon), { className: 'size-3.5' })}
-                        </span>
-                      )}
-                      <span>{cat.categoryName}</span>
-                      {transaction.splits.length > 1 && <span>• {cat.amount.toFixed(2)} €</span>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Montant et actions */}
-              <div className='flex shrink-0 items-center gap-3'>
-                <span
+        <>
+          <div className='space-y-2'>
+            {paginatedTransactions.map((transaction) => (
+              <div key={transaction.id} className='flex items-center gap-3 rounded-lg border bg-card p-3 transition-colors hover:bg-accent'>
+                {/* Icône type */}
+                <div
                   className={cn(
-                    'text-lg font-bold',
-                    transaction.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400',
+                    'flex size-10 shrink-0 items-center justify-center rounded-full',
+                    transaction.type === 'income' ? 'bg-green-100 dark:bg-green-950' : 'bg-red-100 dark:bg-red-950',
                   )}
                 >
-                  {transaction.type === 'income' ? '+' : '-'}
-                  {transaction.totalAmount.toFixed(2)} €
-                </span>
+                  {transaction.type === 'income' ? (
+                    <IconArrowUp className='size-5 text-green-600 dark:text-green-400' />
+                  ) : (
+                    <IconArrowDown className='size-5 text-red-600 dark:text-red-400' />
+                  )}
+                </div>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant='ghost' size='icon' className='size-8'>
-                      <IconDotsVertical className='size-4' />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align='end'>
-                    <DropdownMenuItem onClick={() => onEdit(transaction)}>
-                      <IconEdit className='mr-2 size-4' />
-                      Modifier
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleDeleteClick(transaction)} className='text-destructive'>
-                      <IconTrash className='mr-2 size-4' />
-                      Supprimer
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {/* Contenu */}
+                <div className='min-w-0 flex-1'>
+                  <div className='mb-1 flex items-center gap-2'>
+                    <p className='font-medium'>{transaction.description}</p>
+                    <Badge variant={transaction.type === 'income' ? 'default' : 'secondary'} className='shrink-0'>
+                      {transaction.type === 'income' ? 'Revenu' : 'Dépense'}
+                    </Badge>
+                  </div>
+
+                  <div className='mb-2 flex items-center gap-2 text-sm text-muted-foreground'>
+                    <IconCalendar className='size-3.5' />
+                    <span>{formatDate(transaction.date)}</span>
+                  </div>
+
+                  {/* Catégories */}
+                  <div className='flex flex-wrap gap-1.5'>
+                    {transaction.categoriesDetails.map((cat) => (
+                      <div
+                        key={cat.categoryId}
+                        className='flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium'
+                        style={{
+                          backgroundColor: cat.categoryColor + '20',
+                          color: cat.categoryColor,
+                        }}
+                      >
+                        {cat.categoryIcon && (
+                          <span className='flex size-3.5 items-center justify-center'>
+                            {createElement(getIconComponent(cat.categoryIcon), { className: 'size-3.5' })}
+                          </span>
+                        )}
+                        <span>{cat.categoryName}</span>
+                        {transaction.splits.length > 1 && <span>• {cat.amount.toFixed(2)} €</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Montant et actions */}
+                <div className='flex shrink-0 items-center gap-3'>
+                  <span
+                    className={cn(
+                      'text-lg font-bold',
+                      transaction.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400',
+                    )}
+                  >
+                    {transaction.type === 'income' ? '+' : '-'}
+                    {transaction.totalAmount.toFixed(2)} €
+                  </span>
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant='ghost' size='icon' className='size-8'>
+                        <IconDotsVertical className='size-4' />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align='end'>
+                      <DropdownMenuItem onClick={() => onEdit(transaction)}>
+                        <IconEdit className='mr-2 size-4' />
+                        Modifier
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDeleteClick(transaction)} className='text-destructive'>
+                        <IconTrash className='mr-2 size-4' />
+                        Supprimer
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Pagination currentPage={effectivePage} totalPages={totalPages} onPageChange={handlePageChange} showPageNumbers={!isMobile} />
+          )}
+        </>
       )}
 
       {/* Dialog de confirmation de suppression */}

@@ -1,35 +1,84 @@
 import { IconPlus, IconShoppingCart, IconTrendingDown, IconTrendingUp, IconUpload } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { ImportDialog } from '@/components/import/ImportDialog';
 import { SiteHeader } from '@/components/site-header';
+import { MonthTabs } from '@/components/transactions/MonthTabs';
 import { TransactionList } from '@/components/transactions/TransactionList';
 import { TransactionSheet } from '@/components/transactions/TransactionSheet';
+import { YearNavigator } from '@/components/transactions/YearNavigator';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBudget } from '@/hooks/useBudget';
-import { type TransactionInput, type TransactionWithCategories } from '@/types/budget.types';
+import { MONTH_NAMES, type TransactionInput, type TransactionWithCategories } from '@/types/budget.types';
 
 export default function Page() {
   const { transactions, transactionsLoading, createTransaction, updateTransaction, deleteTransaction } = useBudget();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Memoize now pour éviter de recréer l'objet à chaque render
+  const now = useMemo(() => new Date(), []);
+
+  // États de navigation mois/année avec initialisation depuis URL
+  const [selectedYear, setSelectedYear] = useState(() => {
+    const yearParam = searchParams.get('year');
+    return yearParam ? parseInt(yearParam) : now.getFullYear();
+  });
+
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const monthParam = searchParams.get('month');
+    return monthParam ? parseInt(monthParam) : now.getMonth() + 1;
+  });
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<TransactionWithCategories | null>(null);
 
-  // Calculer les vraies statistiques du mois en cours
-  const now = new Date();
-  const currentMonthTransactions = transactions.filter((t) => {
-    const transactionDate = new Date(t.date);
-    return transactionDate.getMonth() === now.getMonth() && transactionDate.getFullYear() === now.getFullYear();
-  });
+  // Synchronisation URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set('year', String(selectedYear));
+    params.set('month', String(selectedMonth));
+    setSearchParams(params, { replace: true });
+  }, [selectedYear, selectedMonth, setSearchParams]);
 
-  const stats = {
-    totalDepenses: currentMonthTransactions.filter((t) => t.type === 'expense').reduce((sum, t) => sum + t.totalAmount, 0),
-    totalRevenus: currentMonthTransactions.filter((t) => t.type === 'income').reduce((sum, t) => sum + t.totalAmount, 0),
-    solde: 0,
-  };
-  stats.solde = stats.totalRevenus - stats.totalDepenses;
+  // Calcul de la plage d'années
+  const { minYear, maxYear } = useMemo(() => {
+    if (transactions.length === 0) {
+      return { minYear: now.getFullYear(), maxYear: now.getFullYear() };
+    }
+    const years = transactions.map((t) => new Date(t.date).getFullYear());
+    return {
+      minYear: Math.min(...years),
+      maxYear: now.getFullYear(),
+    };
+  }, [transactions, now]);
+
+  // Calculer les statistiques pour le mois sélectionné
+  const currentMonthTransactions = useMemo(() => {
+    return transactions.filter((t) => {
+      const transactionDate = new Date(t.date);
+      return transactionDate.getMonth() + 1 === selectedMonth && transactionDate.getFullYear() === selectedYear;
+    });
+  }, [transactions, selectedMonth, selectedYear]);
+
+  const stats = useMemo(() => {
+    const totalDepenses = currentMonthTransactions.filter((t) => t.type === 'expense').reduce((sum, t) => sum + t.totalAmount, 0);
+    const totalRevenus = currentMonthTransactions.filter((t) => t.type === 'income').reduce((sum, t) => sum + t.totalAmount, 0);
+    return {
+      totalDepenses,
+      totalRevenus,
+      solde: totalRevenus - totalDepenses,
+    };
+  }, [currentMonthTransactions]);
+
+  // Label de période pour les cartes de stats
+  const periodLabel =
+    selectedYear === now.getFullYear() && selectedMonth === now.getMonth() + 1
+      ? 'Ce mois-ci'
+      : `${MONTH_NAMES[selectedMonth - 1]} ${selectedYear}`;
 
   const handleCreate = () => {
     setEditingTransaction(null);
@@ -76,7 +125,7 @@ export default function Page() {
                 </CardHeader>
                 <CardContent>
                   <div className='text-2xl font-bold'>{stats.totalDepenses.toFixed(2)} €</div>
-                  <p className='text-xs text-muted-foreground'>Ce mois-ci</p>
+                  <p className='text-xs text-muted-foreground'>{periodLabel}</p>
                 </CardContent>
               </Card>
               <Card>
@@ -86,7 +135,7 @@ export default function Page() {
                 </CardHeader>
                 <CardContent>
                   <div className='text-2xl font-bold'>{stats.totalRevenus.toFixed(2)} €</div>
-                  <p className='text-xs text-muted-foreground'>Ce mois-ci</p>
+                  <p className='text-xs text-muted-foreground'>{periodLabel}</p>
                 </CardContent>
               </Card>
               <Card>
@@ -108,12 +157,23 @@ export default function Page() {
                 <CardDescription>Historique de vos dépenses et revenus</CardDescription>
               </CardHeader>
               <CardContent>
-                <TransactionList
-                  transactions={transactions}
-                  loading={transactionsLoading}
-                  onEdit={handleEdit}
-                  onDelete={deleteTransaction}
-                />
+                <div className='space-y-4'>
+                  {/* Navigation année */}
+                  <YearNavigator selectedYear={selectedYear} onYearChange={setSelectedYear} minYear={minYear} maxYear={maxYear} />
+
+                  {/* Tabs mois */}
+                  <MonthTabs selectedMonth={selectedMonth} selectedYear={selectedYear} onMonthChange={setSelectedMonth} />
+
+                  {/* Liste avec filtres et pagination */}
+                  <TransactionList
+                    transactions={transactions}
+                    loading={transactionsLoading}
+                    selectedYear={selectedYear}
+                    selectedMonth={selectedMonth}
+                    onEdit={handleEdit}
+                    onDelete={deleteTransaction}
+                  />
+                </div>
               </CardContent>
             </Card>
           </div>

@@ -11,6 +11,61 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 - Documentation des changements pour les prochaines versions
 
+## [0.13.0] - 2026-01-04
+
+### Ajouté
+
+- **Navigation mois/année améliorée pour les transactions** :
+  - Composant `YearNavigator` : Navigation entre années avec flèches (< >) et validation des limites min/max
+  - Composant `MonthTabs` : 12 tabs fixes (Jan, Fév, Mar... Déc) avec scroll horizontal responsive sur mobile
+  - Synchronisation automatique avec l'URL (format `/suivi-depense?year=2024&month=3`)
+  - État préservé au refresh grâce aux query parameters
+  - Navigation browser fonctionnelle (boutons précédent/suivant)
+  - Support du bookmarking pour partage de liens vers un mois spécifique
+
+- **Pagination des transactions** :
+  - Composant `Pagination` réutilisable (style shadcn/ui)
+  - 10 transactions par page avec navigation (boutons < > + numéros de pages)
+  - Stratégie d'ellipses pour grand nombre de pages (ex: [1] [2] [...] [5] [6] [7] [...] [10])
+  - Mode responsive : numéros de pages masqués sur mobile, navigation simplifiée
+  - Info textuelle "Page X sur Y" avec aria-live pour accessibilité
+  - Reset automatique à la page 1 lors du changement de filtres
+
+- **Accessibilité** :
+  - ARIA labels sur tous les boutons de navigation
+  - Attributs aria-current pour la page active
+  - Support complet du keyboard navigation
+  - Annonces screen reader pour changements de page
+
+### Modifié
+
+- **TransactionList** :
+  - Suppression du filtre "Période" (Ce mois / Cette année / Tout)
+  - Ajout des props `selectedYear` et `selectedMonth` pour filtrage contrôlé
+  - Pipeline de filtrage optimisé avec `useMemo` (mois/année + type + catégorie)
+  - Utilisation de `paginatedTransactions` pour l'affichage
+  - Intégration du composant `Pagination` avec détection mobile
+
+- **SuiviDepense** :
+  - Intégration des composants `YearNavigator` et `MonthTabs` dans la Card Transactions
+  - États de navigation synchronisés avec l'URL (`useSearchParams`)
+  - Calcul dynamique de la plage d'années (min/max depuis les transactions)
+  - Statistiques des cartes mises à jour pour le mois sélectionné (au lieu du mois courant)
+  - Label de période dynamique : "Ce mois-ci" ou "Janvier 2024" selon la sélection
+  - Props `selectedYear` et `selectedMonth` passées à TransactionList
+
+### Technique
+
+- Memoization avec `useMemo` pour optimiser les calculs de filtrage et pagination
+- Gestion intelligente de la page courante : reset automatique si dépassement du nombre total de pages
+- Pattern "effectivePage" pour éviter les cascading renders dans useEffect
+- Responsive design : tabs scrollables sur mobile avec snap-x, pagination simplifiée
+- Performance optimale pour < 1000 transactions (pagination côté client)
+
+### Notes
+
+Cette version améliore significativement l'UX de suivi des transactions en permettant une navigation intuitive par mois et année, avec pagination pour gérer efficacement de grands volumes de données. L'état est persisté dans l'URL, permettant bookmarking et partage de liens. L'interface s'adapte parfaitement au mobile avec scroll horizontal et contrôles tactiles optimisés.
+
 ## [0.12.0] - 2026-01-04
 
 ### Ajouté
